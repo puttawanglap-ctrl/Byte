@@ -2,466 +2,1863 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ผจญภัยอาณาจักรพยัญชนะไทย 🇹🇭✨</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Byte's Cyber Quest - วิทยาการคำนวณ ป.4</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Itim&family=Mali:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Google Fonts - Prompt -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        :root {
-            --primary: #FF85A2;
-            --secondary: #70D6FF;
-            --accent: #FFD670;
-            --success: #99FFAC;
-            --white: #ffffff;
-        }
-
         body {
-            font-family: 'Mali', cursive;
-            background: linear-gradient(180deg, #A0E7FF 0%, #FFFFFF 100%);
-            height: 100vh;
-            margin: 0;
-            overflow: hidden;
-            user-select: none;
-            touch-action: manipulation;
+            font-family: 'Prompt', sans-serif;
+            background-color: #0b0f19;
+            color: #f3f4f6;
+            overflow-x: hidden;
         }
-
-        .kawaii-shadow {
-            box-shadow: 0 8px 0 rgba(0,0,0,0.1);
+        /* Custom Neon Glows */
+        .neon-border-blue {
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+            border: 2px solid rgba(59, 130, 246, 0.8);
         }
-
-        .btn-bounce:active {
-            transform: scale(0.95) translateY(4px);
-            box-shadow: 0 2px 0 rgba(0,0,0,0.1);
+        .neon-border-pink {
+            box-shadow: 0 0 15px rgba(236, 72, 153, 0.5);
+            border: 2px solid rgba(236, 72, 153, 0.8);
         }
-
-        .floating {
-            animation: floating 3s ease-in-out infinite;
+        .neon-text-green {
+            text-shadow: 0 0 8px rgba(34, 197, 94, 0.6);
         }
-
-        @keyframes floating {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+        .neon-text-pink {
+            text-shadow: 0 0 8px rgba(236, 72, 153, 0.6);
         }
-
-        .screen {
-            display: none;
-            height: 100%;
-            width: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
-            padding: 20px;
-            flex-direction: column;
-            align-items: center;
+        /* Custom animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(2deg); }
         }
-
-        .active { display: flex; }
-
-        .letter-card {
-            background: white;
-            border: 4px solid var(--primary);
-            border-radius: 25px;
-            transition: all 0.3s;
-            cursor: pointer;
+        .animate-float {
+            animation: float 4s ease-in-out infinite;
         }
-
-        .letter-card:hover { transform: rotate(3deg) scale(1.05); }
-
-        .progress-bar {
-            height: 20px;
-            background: #eee;
-            border-radius: 10px;
-            overflow: hidden;
-            border: 2px solid #ddd;
+        @keyframes pulse-glow {
+            0%, 100% { transform: scale(1); opacity: 0.9; }
+            50% { transform: scale(1.03); opacity: 1; filter: brightness(1.1); }
         }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--accent));
-            width: 0%;
-            transition: width 0.5s ease;
+        .animate-glow {
+            animation: pulse-glow 2s infinite;
         }
-
-        .confetti {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background: red;
-            animation: fall 3s linear forwards;
-        }
-
-        @keyframes fall {
-            to { transform: translateY(100vh) rotate(360deg); }
-        }
-
-        /* Modal styling */
-        .modal-overlay {
-            background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(5px);
+        /* Drag and Drop Custom Styles */
+        .drag-placeholder {
+            border: 2px dashed #4b5563;
+            background-color: rgba(31, 41, 55, 0.5);
         }
     </style>
 </head>
-<body>
+<body class="min-h-screen flex flex-col justify-between selection:bg-pink-500 selection:text-white">
 
-    <!-- UI Overlay (Fixed) -->
-    <div id="ui-overlay" class="hidden fixed top-0 left-0 w-full p-4 z-50 flex justify-between items-center">
-        <div class="flex items-center gap-2">
-            <button onclick="goHome()" class="bg-white p-2 rounded-full border-2 border-pink-400 btn-bounce">🏠</button>
-            <div class="bg-white px-3 py-1 rounded-full border-2 border-pink-400 flex items-center gap-2 shadow-sm">
-                <span id="ui-stars">⭐ 0</span>
-                <span id="ui-coins">🪙 0</span>
-            </div>
-        </div>
-        <div class="flex items-center gap-2">
-            <div class="bg-white px-4 py-1 rounded-full border-2 border-blue-400 font-bold text-blue-600" id="ui-player-name">นักเรียน</div>
-            <button onclick="toggleSound()" id="sound-btn" class="bg-white p-2 rounded-full border-2 border-blue-400 btn-bounce">🔊</button>
-        </div>
-    </div>
-
-    <!-- 1. Login Screen -->
-    <div id="screen-login" class="screen active justify-center bg-[#FFD6E0]">
-        <div class="bg-white p-8 rounded-[40px] border-8 border-pink-300 w-full max-w-sm text-center shadow-2xl">
-            <h1 class="text-3xl font-bold text-pink-500 mb-2">ยินดีต้อนรับ! 🐼</h1>
-            <p class="text-gray-500 mb-6 italic">ใส่ข้อมูลเพื่อเริ่มผจญภัย</p>
-            
-            <input type="text" id="input-name" placeholder="ชื่อเล่น" class="w-full mb-3 p-4 rounded-2xl border-4 border-pink-100 outline-none focus:border-pink-300 text-center text-xl">
-            <div class="flex gap-2 mb-6">
-                <input type="text" id="input-class" placeholder="ชั้น (เช่น ป.1)" class="w-1/2 p-4 rounded-2xl border-4 border-pink-100 outline-none focus:border-pink-300 text-center">
-                <input type="number" id="input-no" placeholder="เลขที่" class="w-1/2 p-4 rounded-2xl border-4 border-pink-100 outline-none focus:border-pink-300 text-center">
-            </div>
-
-            <button onclick="startGame()" class="w-full bg-pink-400 hover:bg-pink-500 text-white text-2xl py-4 rounded-2xl font-bold kawaii-shadow btn-bounce">เข้าสู่ห้องเรียน ✨</button>
-            
-            <button onclick="showAdmin()" class="mt-8 text-xs text-gray-300">Admin Only</button>
-        </div>
-    </div>
-
-    <!-- 2. Main Menu -->
-    <div id="screen-menu" class="screen">
-        <div class="mt-20 text-center">
-            <h2 class="text-4xl font-bold text-blue-500 floating mb-2">เลือกด่านเรียนรู้ 🏰</h2>
-            <div class="grid grid-cols-2 gap-4 mt-8 max-w-md">
-                <button onclick="loadModule('thai')" class="bg-[#FF9AA2] p-6 rounded-3xl border-b-8 border-red-400 text-white font-bold text-xl btn-bounce">
-                    <div class="text-4xl mb-2">🇹🇭</div> ก-ฮ
-                </button>
-                <button onclick="loadModule('vowel')" class="bg-[#B5EAD7] p-6 rounded-3xl border-b-8 border-green-400 text-white font-bold text-xl btn-bounce">
-                    <div class="text-4xl mb-2">🌈</div> สระไทย
-                </button>
-                <button onclick="loadModule('tone')" class="bg-[#FFDAC1] p-6 rounded-3xl border-b-8 border-orange-300 text-white font-bold text-xl btn-bounce">
-                    <div class="text-4xl mb-2">✨</div> วรรณยุกต์
-                </button>
-                <button onclick="loadModule('abc')" class="bg-[#C7CEEA] p-6 rounded-3xl border-b-8 border-purple-400 text-white font-bold text-xl btn-bounce">
-                    <div class="text-4xl mb-2">🔤</div> A-Z
-                </button>
-            </div>
-            
-            <div class="mt-10 flex gap-4">
-                <button onclick="showLeaderboard()" class="bg-yellow-400 px-6 py-2 rounded-full text-white font-bold btn-bounce shadow-md">🏆 อันดับ</button>
-                <button onclick="showStickers()" class="bg-blue-400 px-6 py-2 rounded-full text-white font-bold btn-bounce shadow-md">🎁 ของสะสม</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 3. Learning View (Consonants) -->
-    <div id="screen-game" class="screen">
-        <div class="mt-16 w-full max-w-md">
-            <div class="progress-bar mb-4">
-                <div id="game-progress" class="progress-fill"></div>
-            </div>
-            
-            <div id="question-area" class="bg-white p-6 rounded-[30px] border-4 border-pink-200 shadow-xl text-center relative">
-                <div id="mascot" class="absolute -top-12 -left-4 text-5xl floating">🐼</div>
-                <h3 id="question-text" class="text-2xl font-bold text-gray-700 mb-6">จิ้มรูปที่คู่กับตัวอักษรนี้!</h3>
-                
-                <div id="target-display" class="text-8xl font-bold text-pink-500 mb-8 p-4 bg-pink-50 rounded-2xl inline-block min-w-[120px]">ก</div>
-                
-                <div id="options-grid" class="grid grid-cols-2 gap-4">
-                    <!-- Options injected by JS -->
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 4. Result Screen -->
-    <div id="screen-result" class="screen justify-center">
-        <div class="bg-white p-10 rounded-[40px] border-8 border-yellow-300 text-center max-w-sm shadow-2xl">
-            <h1 class="text-5xl mb-4">🎉</h1>
-            <h2 class="text-3xl font-bold text-gray-800">เก่งมาก!</h2>
-            <p class="text-xl text-pink-500 mb-6" id="result-name">นักเรียนตัวน้อย</p>
-            
-            <div class="bg-yellow-50 p-6 rounded-2xl mb-8">
-                <div class="flex justify-around items-center">
-                    <div>
-                        <div class="text-3xl font-bold text-yellow-500" id="result-stars">0</div>
-                        <div class="text-sm text-gray-500">ดาวที่ได้รับ</div>
-                    </div>
-                    <div>
-                        <div class="text-3xl font-bold text-blue-500" id="result-coins">0</div>
-                        <div class="text-sm text-gray-500">เหรียญทอง</div>
-                    </div>
-                </div>
-            </div>
-
-            <button onclick="goHome()" class="w-full bg-green-400 text-white text-2xl py-4 rounded-2xl font-bold btn-bounce kawaii-shadow mb-4">กลับหน้าหลัก</button>
-            <button onclick="window.location.reload()" class="text-gray-400 font-bold underline">เล่นอีกรอบ</button>
-        </div>
-    </div>
-
-    <!-- 5. Admin Panel -->
-    <div id="screen-admin" class="screen bg-gray-100 p-4">
-        <div class="bg-white w-full h-full rounded-2xl p-6 overflow-auto shadow-inner">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold text-gray-800">📊 แผงควบคุมคุณครู</h2>
-                <button onclick="goHome()" class="text-red-500 font-bold">ปิด [X]</button>
-            </div>
-            
-            <table class="w-full text-left text-sm">
-                <thead class="bg-gray-200">
-                    <tr>
-                        <th class="p-2">ชื่อ</th>
-                        <th class="p-2">ชั้น</th>
-                        <th class="p-2">ดาว</th>
-                        <th class="p-2">คะแนนรวม</th>
-                    </tr>
-                </thead>
-                <tbody id="admin-table-body">
-                    <!-- Data here -->
-                </tbody>
-            </table>
-            
-            <div class="mt-8 flex gap-2">
-                <button onclick="exportData()" class="bg-blue-500 text-white px-4 py-2 rounded-lg text-xs">Export CSV</button>
-                <button onclick="clearData()" class="bg-red-500 text-white px-4 py-2 rounded-lg text-xs">ล้างข้อมูลทั้งหมด</button>
-            </div>
-        </div>
-    </div>
-
+    <!-- AUDIO CONTROLLER (Web Audio API) -->
     <script>
-        // --- Game Logic & State ---
-        let gameState = {
-            player: { name: '', class: '', no: '', stars: 0, coins: 0, level: 1 },
-            currentModule: 'thai',
-            currentStep: 0,
-            totalSteps: 5,
-            score: 0,
-            isMuted: false
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new AudioCtx();
+            }
+        }
+
+        // Sound generators using Synthesizers
+        function playSound(type) {
+            try {
+                initAudio();
+                if (!audioCtx) return;
+                
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                const now = audioCtx.currentTime;
+
+                if (type === 'click') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(600, now);
+                    osc.frequency.exponentialRampToValueAtTime(150, now + 0.1);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                    osc.start(now);
+                    osc.stop(now + 0.1);
+                } else if (type === 'correct') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(523.25, now); // C5
+                    osc.frequency.setValueAtTime(659.25, now + 0.08); // E5
+                    osc.frequency.setValueAtTime(783.99, now + 0.16); // G5
+                    osc.frequency.setValueAtTime(1046.50, now + 0.24); // C6
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.45);
+                    osc.start(now);
+                    osc.stop(now + 0.45);
+                } else if (type === 'wrong') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(180, now);
+                    osc.frequency.linearRampToValueAtTime(100, now + 0.3);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                    osc.start(now);
+                    osc.stop(now + 0.3);
+                } else if (type === 'level-up') {
+                    // Celebration fanfare
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, now);
+                    osc.frequency.setValueAtTime(659.25, now + 0.1);
+                    osc.frequency.setValueAtTime(783.99, now + 0.2);
+                    osc.frequency.setValueAtTime(1046.50, now + 0.3);
+                    osc.frequency.setValueAtTime(1318.51, now + 0.4);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.02, now + 0.6);
+                    osc.start(now);
+                    osc.stop(now + 0.6);
+                } else if (type === 'laser') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(880, now);
+                    osc.frequency.exponentialRampToValueAtTime(220, now + 0.15);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+                    osc.start(now);
+                    osc.stop(now + 0.15);
+                }
+            } catch (e) {
+                console.log("Audio Error context not allowed yet", e);
+            }
+        }
+    </script>
+
+    <!-- HEADER: STATS & NAVIGATION -->
+    <header class="bg-slate-900 border-b border-slate-800 px-4 py-3 sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto flex flex-wrap justify-between items-center gap-3">
+            <!-- Brand / Logo -->
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="goHome()">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-500 to-pink-500 flex items-center justify-center text-white font-extrabold text-xl shadow-lg shadow-blue-500/20">
+                    B
+                </div>
+                <div>
+                    <h1 class="text-lg font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-pink-400">BYTE'S QUEST</h1>
+                    <p class="text-[10px] text-slate-400 font-medium">วิทยาการคำนวณ ป.4</p>
+                </div>
+            </div>
+
+            <!-- Student Profile Summary (Hidden on Home screen if not logged in, but displayed globally) -->
+            <div id="header-stats" class="flex items-center space-x-4 bg-slate-950/80 px-4 py-1.5 rounded-full border border-slate-800 text-xs sm:text-sm">
+                <div class="flex items-center space-x-1" title="เลเวลปัจจุบัน">
+                    <span class="text-amber-400 font-bold">LV.</span>
+                    <span id="stat-level" class="font-black text-amber-300">1</span>
+                </div>
+                <div class="h-4 w-[1px] bg-slate-800"></div>
+                <div class="flex items-center space-x-1" title="เหรียญ">
+                    <i data-lucide="coins" class="w-4 h-4 text-yellow-400"></i>
+                    <span id="stat-coins" class="font-bold text-yellow-300">0</span>
+                </div>
+                <div class="h-4 w-[1px] bg-slate-800"></div>
+                <div class="flex items-center space-x-1" title="คะแนนสะสม">
+                    <i data-lucide="star" class="w-4 h-4 text-blue-400"></i>
+                    <span id="stat-points" class="font-bold text-blue-300">0</span>
+                </div>
+                <div class="h-4 w-[1px] bg-slate-800"></div>
+                <div class="flex items-center space-x-1" title="พลังชีวิตบอส / หัวใจ">
+                    <i data-lucide="zap" class="w-4 h-4 text-pink-400"></i>
+                    <span id="stat-xp" class="font-bold text-pink-300">0 XP</span>
+                </div>
+            </div>
+
+            <!-- Dashboard Button & Sound toggle -->
+            <div class="flex items-center space-x-2">
+                <button onclick="toggleTeacherPanel()" class="bg-indigo-600/30 hover:bg-indigo-600 text-indigo-300 hover:text-white border border-indigo-500/30 px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1 transition-all duration-200">
+                    <i data-lucide="users-2" class="w-3.5 h-3.5"></i>
+                    <span>คุณครู</span>
+                </button>
+                <button onclick="playSound('click')" class="bg-slate-800 hover:bg-slate-700 p-2 rounded-lg text-slate-400 hover:text-white transition-colors">
+                    <i data-lucide="volume-2" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN APP WRAPPER -->
+    <main class="flex-grow max-w-6xl w-full mx-auto px-4 py-6 flex flex-col justify-center">
+
+        <!-- 1. LOGIN / NAME SELECTION SCREEN -->
+        <section id="screen-login" class="w-full max-w-md mx-auto bg-slate-900/90 rounded-2xl p-6 border border-slate-800 neon-border-blue relative overflow-hidden">
+            <!-- Decorative Light Effects -->
+            <div class="absolute -top-10 -right-10 w-24 h-24 bg-pink-500/10 rounded-full blur-2xl"></div>
+            <div class="absolute -bottom-10 -left-10 w-24 h-24 bg-blue-500/10 rounded-full blur-2xl"></div>
+
+            <div class="text-center mb-6">
+                <!-- Byte Mascot -->
+                <div class="w-24 h-24 mx-auto mb-4 bg-slate-850 rounded-2xl border-2 border-blue-400 flex items-center justify-center shadow-lg relative animate-float">
+                    <span class="absolute top-1 right-1 flex h-3 w-3">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                    </span>
+                    <!-- Robotic Mascot SVG -->
+                    <svg class="w-16 h-16" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="12" y="16" width="40" height="32" rx="8" fill="#1e293b" stroke="#3b82f6" stroke-width="3"/>
+                        <rect x="20" y="24" width="8" height="8" rx="2" fill="#60a5fa" class="animate-pulse"/>
+                        <rect x="36" y="24" width="8" height="8" rx="2" fill="#60a5fa" class="animate-pulse"/>
+                        <path d="M26 40 C26 40, 32 44, 38 40" stroke="#f43f5e" stroke-width="3" stroke-linecap="round"/>
+                        <line x1="32" y1="16" x2="32" y2="8" stroke="#3b82f6" stroke-width="3"/>
+                        <circle cx="32" cy="7" r="3" fill="#f43f5e"/>
+                    </svg>
+                </div>
+                <h2 class="text-2xl font-black text-white">เข้าสู่ระบบฮีโร่ตัวน้อย!</h2>
+                <p class="text-sm text-slate-400 mt-1">ยินดีต้อนรับสู่ภารกิจช่วยเจ้าหุ่นยนต์ "Byte"</p>
+            </div>
+
+            <form onsubmit="handleLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">ชื่อหรือสมญานามของคุณ</label>
+                    <input type="text" id="input-username" required placeholder="เช่น น้องออโต้, ByteHero" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-semibold">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">ชั้นประถมศึกษาปีที่ 4 ห้อง</label>
+                    <select id="input-classroom" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                        <option value="4/1">ชั้น ป.4 / 1</option>
+                        <option value="4/2">ชั้น ป.4 / 2</option>
+                        <option value="4/3">ชั้น ป.4 / 3</option>
+                        <option value="4/4">ชั้น ป.4 / 4</option>
+                    </select>
+                </div>
+                <button type="submit" onclick="playSound('click')" class="w-full bg-gradient-to-r from-blue-500 to-pink-500 hover:from-blue-600 hover:to-pink-600 text-white font-bold py-3.5 px-6 rounded-xl shadow-lg shadow-pink-500/20 active:scale-95 transition-all text-center block">
+                    เริ่มการผจญภัยได้เลย! 🎮
+                </button>
+            </form>
+        </section>
+
+        <!-- 2. GAME HUB / WORLD MAP SCREEN -->
+        <section id="screen-hub" class="hidden space-y-6">
+            <!-- Daily Mission Alert & Welcome Back -->
+            <div class="bg-gradient-to-r from-slate-900 to-indigo-950 p-4 rounded-2xl border border-indigo-900/40 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-indigo-900/50 p-3 rounded-xl border border-indigo-500/30">
+                        <i data-lucide="trophy" class="w-6 h-6 text-amber-400"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-black text-sm text-indigo-200 uppercase tracking-wide">ภารกิจประจำวัน (Daily Mission)</h3>
+                        <p class="text-xs text-slate-300 font-semibold" id="daily-mission-text">ผ่านด่าน 1 และ 2 เพื่อรับเหรียญโบนัส +50 Coins!</p>
+                    </div>
+                </div>
+                <div id="btn-claim-daily" class="hidden">
+                    <button onclick="claimDailyBonus()" class="bg-gradient-to-r from-amber-500 to-yellow-400 hover:from-amber-600 hover:to-yellow-500 text-slate-950 font-black px-4 py-2 rounded-xl text-xs shadow-md animate-glow">
+                        รับรางวัลนำโชค 🎁
+                    </button>
+                </div>
+                <div id="daily-claimed" class="hidden text-xs font-semibold bg-emerald-950/50 border border-emerald-900 text-emerald-400 px-3 py-1.5 rounded-lg">
+                    รับรางวัลแล้ววันนี้ 🎉
+                </div>
+            </div>
+
+            <!-- Dashboard Stats Panels -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800 text-center">
+                    <div class="text-[10px] uppercase font-bold text-slate-400">เลเวลของคุณ</div>
+                    <div class="text-3xl font-black text-amber-400" id="hub-level">1</div>
+                    <div class="text-[10px] text-slate-400 mt-1" id="hub-xp-progress">0 / 100 XP</div>
+                </div>
+                <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800 text-center">
+                    <div class="text-[10px] uppercase font-bold text-slate-400">เหรียญสะสม</div>
+                    <div class="text-3xl font-black text-yellow-400" id="hub-coins">0</div>
+                    <div class="text-[10px] text-slate-400 mt-1">ใช้แลกไอเทมและสติ๊กเกอร์</div>
+                </div>
+                <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800 text-center">
+                    <div class="text-[10px] uppercase font-bold text-slate-400">คะแนนปัจจุบัน</div>
+                    <div class="text-3xl font-black text-blue-400" id="hub-points">0</div>
+                    <div class="text-[10px] text-slate-400 mt-1">อันดับบนกระดานคะแนน</div>
+                </div>
+                <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800 text-center">
+                    <div class="text-[10px] uppercase font-bold text-slate-400">เหรียญตรา (Badges)</div>
+                    <div class="text-3xl font-black text-pink-400" id="hub-badges-count">0</div>
+                    <div class="text-[10px] text-slate-400 mt-1">ปลดล็อคความสำเร็จ</div>
+                </div>
+            </div>
+
+            <!-- LEVEL PROGRESSION MAP -->
+            <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-800 relative">
+                <h3 class="text-lg font-black text-white mb-6 flex items-center gap-2">
+                    <i data-lucide="map" class="text-emerald-400"></i>
+                    แผนที่การผจญภัยใน Cyber City
+                </h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4 relative">
+                    <!-- Progress Connection Line (only for larger screen decorative illusion) -->
+                    <div class="hidden md:block absolute top-1/2 left-8 right-8 h-1 bg-slate-800 -translate-y-1/2 z-0"></div>
+
+                    <!-- Level 1 Button -->
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 relative z-10 flex flex-col justify-between hover:border-blue-500 transition-all duration-200">
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="bg-blue-500/20 text-blue-400 font-extrabold text-[10px] px-2 py-0.5 rounded-full">ด่านที่ 1</span>
+                            <span class="text-emerald-400 text-xs flex items-center gap-1"><i data-lucide="check" class="w-3 h-3"></i> ผ่านแล้ว</span>
+                        </div>
+                        <h4 class="font-bold text-sm text-slate-200 mb-1">ขั้นตอนแปรงฟันแสนกล</h4>
+                        <p class="text-[11px] text-slate-400 mb-4">จัดเรียงขั้นตอนอย่างมีระเบียบ (Drag & Drop)</p>
+                        <button onclick="startLevel(1)" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded-lg text-xs">เล่นอีกรอบ 🎮</button>
+                    </div>
+
+                    <!-- Level 2 Button -->
+                    <div id="card-lvl-2" class="bg-slate-950 p-4 rounded-xl border border-slate-800 relative z-10 flex flex-col justify-between hover:border-pink-500 transition-all duration-200">
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="bg-pink-500/20 text-pink-400 font-extrabold text-[10px] px-2 py-0.5 rounded-full">ด่านที่ 2</span>
+                            <span id="badge-lvl-2" class="text-slate-500 text-xs flex items-center gap-1"><i data-lucide="lock" class="w-3 h-3"></i> ล็อคอยู่</span>
+                        </div>
+                        <h4 class="font-bold text-sm text-slate-200 mb-1">เขาวงกตช่วยพาย</h4>
+                        <p class="text-[11px] text-slate-400 mb-4">เขียนโค้ดพา Byte ออกจากเขาวงกต</p>
+                        <button id="btn-lvl-2" onclick="startLevel(2)" disabled class="w-full bg-slate-800 text-slate-500 font-bold py-2 rounded-lg text-xs cursor-not-allowed">เริ่มท้าทาย 🔒</button>
+                    </div>
+
+                    <!-- Level 3 Button -->
+                    <div id="card-lvl-3" class="bg-slate-950 p-4 rounded-xl border border-slate-800 relative z-10 flex flex-col justify-between hover:border-purple-500 transition-all duration-200">
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="bg-purple-500/20 text-purple-400 font-extrabold text-[10px] px-2 py-0.5 rounded-full">ด่านที่ 3</span>
+                            <span id="badge-lvl-3" class="text-slate-500 text-xs flex items-center gap-1"><i data-lucide="lock" class="w-3 h-3"></i> ล็อคอยู่</span>
+                        </div>
+                        <h4 class="font-bold text-sm text-slate-200 mb-1">ถอดรหัสลับตรรกะ</h4>
+                        <p class="text-[11px] text-slate-400 mb-4">สืบสวนหาคำตอบจากข้อมูลเงื่อนไข</p>
+                        <button id="btn-lvl-3" onclick="startLevel(3)" disabled class="w-full bg-slate-800 text-slate-500 font-bold py-2 rounded-lg text-xs cursor-not-allowed">เริ่มท้าทาย 🔒</button>
+                    </div>
+
+                    <!-- Level 4 Button -->
+                    <div id="card-lvl-4" class="bg-slate-950 p-4 rounded-xl border border-slate-800 relative z-10 flex flex-col justify-between hover:border-amber-500 transition-all duration-200">
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="bg-amber-500/20 text-amber-400 font-extrabold text-[10px] px-2 py-0.5 rounded-full">ด่านที่ 4</span>
+                            <span id="badge-lvl-4" class="text-slate-500 text-xs flex items-center gap-1"><i data-lucide="lock" class="w-3 h-3"></i> ล็อคอยู่</span>
+                        </div>
+                        <h4 class="font-bold text-sm text-slate-200 mb-1">ล้มบอส Logicia</h4>
+                        <p class="text-[11px] text-slate-400 mb-4">สู้กับบอสตรรกะด้วยความรู้สะสมทั้งหมด!</p>
+                        <button id="btn-lvl-4" onclick="startLevel(4)" disabled class="w-full bg-slate-800 text-slate-500 font-bold py-2 rounded-lg text-xs cursor-not-allowed font-black">สู้บอส 👾</button>
+                    </div>
+
+                    <!-- Teacher / Sandbox Area -->
+                    <div class="bg-gradient-to-tr from-indigo-950 to-slate-950 p-4 rounded-xl border border-indigo-500/20 relative z-10 flex flex-col justify-between">
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="bg-emerald-500/20 text-emerald-400 font-extrabold text-[10px] px-2 py-0.5 rounded-full">โหมดครู</span>
+                        </div>
+                        <h4 class="font-bold text-sm text-indigo-300 mb-1">รายงานผลการเรียน</h4>
+                        <p class="text-[11px] text-slate-400 mb-4">ดูสถิตินักเรียน คะแนนเฉลี่ย และผลการด่าน</p>
+                        <button onclick="toggleTeacherPanel()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2 rounded-lg text-xs">เปิดแดชบอร์ด 📊</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BADGES & LEADERBOARD GRID -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Badges Showcase -->
+                <div class="bg-slate-900/40 p-5 rounded-2xl border border-slate-800 flex flex-col justify-between">
+                    <div>
+                        <h3 class="font-black text-sm text-slate-200 mb-4 flex items-center gap-1.5 uppercase">
+                            <i data-lucide="award" class="text-pink-500"></i> เหรียญตราเกียรติยศ (Badges)
+                        </h3>
+                        <div class="grid grid-cols-4 gap-3">
+                            <!-- Badge 1: Algorithm Master -->
+                            <div class="text-center group cursor-pointer" title="ผู้เชี่ยวชาญอัลกอริทึม: ผ่านด่านที่ 1 สำเร็จ">
+                                <div id="badge-icon-1" class="w-12 h-12 mx-auto rounded-full bg-slate-800/80 flex items-center justify-center border border-slate-700 transition-all duration-300">
+                                    <i data-lucide="git-commit" class="w-6 h-6 text-slate-600"></i>
+                                </div>
+                                <p class="text-[9px] mt-1 font-bold text-slate-400">คิดเป็นขั้นตอน</p>
+                            </div>
+                            <!-- Badge 2: Maze Solver -->
+                            <div class="text-center group cursor-pointer" title="ผู้ไขเขาวงกต: เขียนโปรแกรมด่านที่ 2 ผ่าน">
+                                <div id="badge-icon-2" class="w-12 h-12 mx-auto rounded-full bg-slate-800/80 flex items-center justify-center border border-slate-700 transition-all duration-300">
+                                    <i data-lucide="navigation" class="w-6 h-6 text-slate-600"></i>
+                                </div>
+                                <p class="text-[9px] mt-1 font-bold text-slate-400">นักโปรแกรม</p>
+                            </div>
+                            <!-- Badge 3: Logic Thinker -->
+                            <div class="text-center group cursor-pointer" title="นักคิดเชิงตรรกะ: ผ่านเกมถอดรหัสลับด้วยเหตุผล">
+                                <div id="badge-icon-3" class="w-12 h-12 mx-auto rounded-full bg-slate-800/80 flex items-center justify-center border border-slate-700 transition-all duration-300">
+                                    <i data-lucide="brain-circuit" class="w-6 h-6 text-slate-600"></i>
+                                </div>
+                                <p class="text-[9px] mt-1 font-bold text-slate-400">เซียนตรรกะ</p>
+                            </div>
+                            <!-- Badge 4: Boss Destroyer -->
+                            <div class="text-center group cursor-pointer" title="ผู้โค่นล้มลอจิเซีย: ปราบสุดยอดบอสตัวจริง">
+                                <div id="badge-icon-4" class="w-12 h-12 mx-auto rounded-full bg-slate-800/80 flex items-center justify-center border border-slate-700 transition-all duration-300">
+                                    <i data-lucide="skull" class="w-6 h-6 text-slate-600"></i>
+                                </div>
+                                <p class="text-[9px] mt-1 font-bold text-slate-400">ผู้ชนะบอส</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-800/50 text-[11px] text-slate-400">
+                        * ปลดล็อคความสำเร็จเพื่อแลกรางวัลพิเศษในห้องเรียนกับคุณครู!
+                    </div>
+                </div>
+
+                <!-- Leaderboard -->
+                <div class="bg-slate-900/40 p-5 rounded-2xl border border-slate-800 md:col-span-2">
+                    <h3 class="font-black text-sm text-slate-200 mb-4 flex items-center gap-1.5 uppercase">
+                        <i data-lucide="trending-up" class="text-yellow-400"></i> กระดานคะแนนเพื่อนร่วมห้อง (Leaderboard)
+                    </h3>
+                    <div class="overflow-hidden rounded-xl border border-slate-800">
+                        <table class="w-full text-left text-xs text-slate-300">
+                            <thead class="bg-slate-950/75 text-slate-400 uppercase font-bold text-[10px]">
+                                <tr>
+                                    <th class="px-4 py-2.5">อันดับ</th>
+                                    <th class="px-4 py-2.5">ชื่อผู้เล่น</th>
+                                    <th class="px-4 py-2.5 text-center">ห้อง</th>
+                                    <th class="px-4 py-2.5 text-right">เลเวล</th>
+                                    <th class="px-4 py-2.5 text-right">คะแนน (Points)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="leaderboard-body">
+                                <!-- Generated Dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. LEVEL 1: ALGORITHM DRAG & DROP -->
+        <section id="screen-lvl-1" class="hidden space-y-6 max-w-2xl mx-auto">
+            <div class="bg-slate-900 p-5 rounded-2xl border border-blue-500/30 neon-border-blue">
+                <div class="flex justify-between items-center mb-4">
+                    <div class="flex items-center space-x-2">
+                        <span class="bg-blue-600 text-white font-black px-2.5 py-1 rounded-lg text-xs">ด่าน 1</span>
+                        <h3 class="font-black text-white text-lg">อัลกอริทึมการแปรงฟัน 🪥</h3>
+                    </div>
+                    <span class="text-xs text-slate-400">ช่วยลากขั้นตอนสลับตำแหน่งให้ถูกต้อง</span>
+                </div>
+
+                <div class="text-sm text-slate-300 mb-4 leading-relaxed bg-slate-950/50 p-3 rounded-lg border border-slate-800">
+                    💡 <span class="text-blue-400 font-bold">Byte แปรงฟันยังไงดี?</span> ช่วย Byte เรียงขั้นตอนการแปรงฟันจาก "เริ่มต้น" ไป "สิ้นสุด" เพื่อฟันสะอาดและหลีกเลี่ยงเชื้อโรคกันเถอะ!
+                </div>
+
+                <!-- Draggable Container -->
+                <div id="drag-items" class="space-y-2 mb-6">
+                    <!-- Cards will be populated dynamically -->
+                </div>
+
+                <div class="flex justify-between items-center pt-4 border-t border-slate-800">
+                    <button onclick="goHub()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2.5 rounded-xl text-xs font-bold transition-all">
+                        กลับแผนที่ 🗺️
+                    </button>
+                    <button onclick="checkLvl1Answer()" class="bg-gradient-to-r from-emerald-500 to-green-500 hover:from-emerald-600 hover:to-green-600 text-slate-950 font-black px-6 py-2.5 rounded-xl text-sm transition-all shadow-md shadow-green-500/20 active:scale-95">
+                        ตรวจสอบคำตอบ ✅
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. LEVEL 2: MAZE / PATH CODING CHALLENGE -->
+        <section id="screen-lvl-2" class="hidden space-y-6 max-w-4xl mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Maze Visual Area -->
+                <div class="lg:col-span-7 bg-slate-900 p-5 rounded-2xl border border-pink-500/30 neon-border-pink flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-center mb-3">
+                            <div class="flex items-center space-x-2">
+                                <span class="bg-pink-600 text-white font-black px-2.5 py-1 rounded-lg text-xs">ด่าน 2</span>
+                                <h3 class="font-black text-white text-lg">เขาวงกตแสนซน 🤖</h3>
+                            </div>
+                            <span class="text-xs text-pink-400 font-semibold" id="maze-moves-limit">ขีดจำกัด: 6 บล็อก</span>
+                        </div>
+                        <div class="text-xs text-slate-300 bg-slate-950 p-2 rounded border border-slate-800 mb-3">
+                            💡 เลือกคำสั่ง "เดินหน้า", "หันซ้าย", "หันขวา" เพื่อให้ Byte เดินทางจากจุดเริ่มสีน้ำเงิน (B) ไปถึงจุดหมายสีแดง (★)
+                        </div>
+                    </div>
+
+                    <!-- Canvas/Grid of Maze -->
+                    <div class="flex justify-center items-center my-2">
+                        <div class="grid grid-cols-5 gap-1.5 bg-slate-950 p-4 rounded-xl border border-slate-800 w-full max-w-[320px] aspect-square" id="maze-grid">
+                            <!-- Populated via JavaScript (5x5 grid) -->
+                        </div>
+                    </div>
+
+                    <div class="flex gap-2 mt-2">
+                        <button onclick="resetMaze()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 py-2 rounded-lg text-xs font-bold">รีเซ็ตตำแหน่ง 🔄</button>
+                        <button onclick="runMazeCode()" class="flex-1 bg-pink-600 hover:bg-pink-500 text-white py-2 rounded-lg text-xs font-black animate-glow">รันคำสั่ง ▶️</button>
+                    </div>
+                </div>
+
+                <!-- Code Block Selector Area -->
+                <div class="lg:col-span-5 bg-slate-900 p-5 rounded-2xl border border-slate-800 flex flex-col justify-between">
+                    <div>
+                        <h4 class="font-black text-sm text-slate-200 mb-3">กล่องรหัสคำสั่ง (Command Blocks)</h4>
+                        <div class="grid grid-cols-3 gap-2 mb-4">
+                            <button onclick="addBlock('MOVE_FORWARD')" class="bg-slate-950 hover:bg-slate-850 p-2 rounded-lg border border-blue-500/30 text-xs flex flex-col items-center text-blue-400 transition-colors">
+                                <i data-lucide="arrow-up" class="w-4 h-4 mb-1"></i>
+                                <span>เดินหน้า</span>
+                            </button>
+                            <button onclick="addBlock('TURN_LEFT')" class="bg-slate-950 hover:bg-slate-850 p-2 rounded-lg border border-pink-500/30 text-xs flex flex-col items-center text-pink-400 transition-colors">
+                                <i data-lucide="arrow-left" class="w-4 h-4 mb-1"></i>
+                                <span>หันซ้าย</span>
+                            </button>
+                            <button onclick="addBlock('TURN_RIGHT')" class="bg-slate-950 hover:bg-slate-850 p-2 rounded-lg border border-amber-500/30 text-xs flex flex-col items-center text-amber-400 transition-colors">
+                                <i data-lucide="arrow-right" class="w-4 h-4 mb-1"></i>
+                                <span>หันขวา</span>
+                            </button>
+                        </div>
+
+                        <h4 class="font-black text-sm text-slate-200 mb-2">โค้ดปัจจุบันของคุณ</h4>
+                        <div id="code-stack" class="bg-slate-950 rounded-xl p-3 border border-slate-800 min-h-[160px] flex flex-col gap-1.5 overflow-y-auto max-h-[180px]">
+                            <!-- Draggable-like code stack -->
+                        </div>
+                    </div>
+
+                    <div class="flex justify-between items-center pt-4 border-t border-slate-800 mt-4">
+                        <button onclick="goHub()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2.5 rounded-xl text-xs font-bold transition-all">กลับแผนที่ 🗺️</button>
+                        <button onclick="clearCodeStack()" class="text-rose-400 hover:text-rose-300 text-xs font-bold px-3 py-1 bg-rose-950/20 border border-rose-900/30 rounded-lg">ล้างทั้งหมด 🗑️</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. LEVEL 3: LOGIC PUZZLE SCREEN -->
+        <section id="screen-lvl-3" class="hidden space-y-6 max-w-2xl mx-auto">
+            <div class="bg-slate-900 p-6 rounded-2xl border border-purple-500/30 neon-border-blue">
+                <div class="flex justify-between items-center mb-4">
+                    <div class="flex items-center space-x-2">
+                        <span class="bg-purple-600 text-white font-black px-2.5 py-1 rounded-lg text-xs">ด่าน 3</span>
+                        <h3 class="font-black text-white text-lg">สืบคดีถอดรหัสตรรกะ 🔍</h3>
+                    </div>
+                </div>
+
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3 mb-6">
+                    <h4 class="text-pink-400 font-extrabold text-sm">คดีสีบ้านของสัตว์ 3 ชนิด!</h4>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        เจ้าสัตว์ 3 ชนิด: <strong>กระต่าย 🐰, สุนัขจิ้งจอก 🦊, และกระรอก 🐿️</strong> อาศัยอยู่ในบ้านสามหลังติดกันที่มีสี <strong>สีส้ม 🧡, สีฟ้า 💙, และสีชมพู 💗</strong> โดยมีเบาะแสลับดังนี้:
+                    </p>
+                    <ul class="text-xs text-slate-400 list-disc list-inside space-y-1.5 pl-2">
+                        <li>กระต่าย 🐰 ไม่ชอบสีส้ม และไม่ได้อยู่บ้านสีส้ม</li>
+                        <li>สุนัขจิ้งจอก 🦊 อยู่ในบ้านหลังแรกและเป็นสีชมพู 💗</li>
+                        <li>กระรอก 🐿️ ไม่ชอบบ้านหลังสุดท้ายและอยู่ติดกับกระต่าย</li>
+                    </ul>
+                    <p class="text-xs text-amber-300 font-semibold pt-2">❓ จากข้อความข้างต้น บ้านสีส้ม 🧡 เป็นของสัตว์ชนิดใด?</p>
+                </div>
+
+                <!-- Answer options -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
+                    <button onclick="selectLvl3Answer('กระต่าย')" id="opt-l3-1" class="bg-slate-950 hover:bg-slate-850 border border-slate-800 hover:border-blue-500/50 p-4 rounded-xl text-center font-bold text-sm transition-all">
+                        <span class="block text-2xl mb-1">🐰</span>
+                        กระต่าย (Rabbit)
+                    </button>
+                    <button onclick="selectLvl3Answer('สุนัขจิ้งจอก')" id="opt-l3-2" class="bg-slate-950 hover:bg-slate-850 border border-slate-800 hover:border-pink-500/50 p-4 rounded-xl text-center font-bold text-sm transition-all">
+                        <span class="block text-2xl mb-1">🦊</span>
+                        สุนัขจิ้งจอก (Fox)
+                    </button>
+                    <button onclick="selectLvl3Answer('กระรอก')" id="opt-l3-3" class="bg-slate-950 hover:bg-slate-850 border border-slate-800 hover:border-amber-500/50 p-4 rounded-xl text-center font-bold text-sm transition-all">
+                        <span class="block text-2xl mb-1">🐿️</span>
+                        กระรอก (Squirrel)
+                    </button>
+                </div>
+
+                <div class="flex justify-between items-center pt-4 border-t border-slate-800">
+                    <button onclick="goHub()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2.5 rounded-xl text-xs font-bold transition-all">
+                        กลับแผนที่ 🗺️
+                    </button>
+                    <button onclick="checkLvl3Answer()" class="bg-gradient-to-r from-emerald-500 to-green-500 hover:from-emerald-600 hover:to-green-600 text-slate-950 font-black px-6 py-2.5 rounded-xl text-sm transition-all shadow-md">
+                        ตอบคำถาม 🚀
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. LEVEL 4: FINAL BOSS BATTLE -->
+        <section id="screen-lvl-4" class="hidden space-y-6 max-w-3xl mx-auto">
+            <div class="bg-slate-900 p-6 rounded-2xl border border-rose-500/30 neon-border-pink relative">
+                <!-- Boss Header Stats -->
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-12 h-12 bg-rose-950 border border-rose-500 rounded-xl flex items-center justify-center text-2xl">
+                            👾
+                        </div>
+                        <div>
+                            <h3 class="font-black text-rose-400 text-lg uppercase tracking-wider">บอสสูงสุด: Logicia 💀</h3>
+                            <p class="text-xs text-slate-400 font-semibold">พลังบอสลดลงเมื่อน้องๆ ตอบข้อสอบได้ถูกต้อง!</p>
+                        </div>
+                    </div>
+                    <!-- Boss Health Bar -->
+                    <div class="w-full sm:w-48 bg-slate-950 h-5 rounded-full border border-rose-900 overflow-hidden relative" title="พลังชีวิตบอส">
+                        <div id="boss-hp" class="bg-gradient-to-r from-rose-500 to-red-600 h-full w-full transition-all duration-500"></div>
+                        <span class="absolute inset-0 text-[10px] flex items-center justify-center font-black text-white" id="boss-hp-text">100 / 100 HP</span>
+                    </div>
+                </div>
+
+                <!-- Boss Arena Visual Animation -->
+                <div class="bg-slate-950/80 p-4 rounded-xl border border-slate-800 flex justify-between items-center mb-6 min-h-[140px]">
+                    <!-- Mini Byte Graphic -->
+                    <div class="text-center">
+                        <div class="w-14 h-14 bg-slate-800 rounded-lg border-2 border-blue-400 flex items-center justify-center text-xl animate-bounce">
+                            🤖
+                        </div>
+                        <p class="text-[10px] text-blue-400 font-black mt-1">Byte (คุณ)</p>
+                    </div>
+
+                    <!-- Beam Line Container -->
+                    <div class="flex-grow px-4 flex items-center justify-center relative">
+                        <div class="w-full h-1 bg-slate-800 rounded-full"></div>
+                        <div id="laser-beam" class="hidden absolute top-1/2 left-0 right-0 h-1.5 bg-cyan-400 blur-sm"></div>
+                    </div>
+
+                    <!-- Logicia Boss Graphic -->
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-rose-950 rounded-lg border-2 border-rose-500 flex items-center justify-center text-3xl animate-pulse">
+                            👿
+                        </div>
+                        <p class="text-[10px] text-rose-500 font-black mt-1">Logicia</p>
+                    </div>
+                </div>
+
+                <!-- Quiz Zone -->
+                <div id="boss-quiz-container" class="space-y-4">
+                    <!-- Current Quiz Question Will Load Here Dynamically -->
+                </div>
+
+                <div class="flex justify-between items-center pt-4 border-t border-slate-800 mt-6">
+                    <button onclick="goHub()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2.5 rounded-xl text-xs font-bold transition-all">
+                        ยอมแพ้แล้วกลับแผนที่ 🗺️
+                    </button>
+                    <div class="text-xs text-slate-400 font-bold" id="boss-level-difficulty">ระดับความยาก: ป.4 ปานกลาง</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. LEVEL SUCCESS MODAL -->
+        <div id="modal-success" class="hidden fixed inset-0 bg-slate-950/90 flex items-center justify-center p-4 z-50">
+            <div class="bg-slate-900 border border-blue-500/30 neon-border-blue rounded-2xl max-w-md w-full p-6 text-center space-y-4 relative overflow-hidden">
+                <!-- Fireworks Confetti Effect Mockup -->
+                <div class="absolute -top-10 -right-10 w-24 h-24 bg-green-500/10 rounded-full blur-2xl"></div>
+
+                <div class="w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center text-3xl mx-auto border border-emerald-500 text-emerald-400 animate-bounce">
+                    🏆
+                </div>
+
+                <h3 class="text-2xl font-black text-white">ทำภารกิจสำเร็จแล้ว!</h3>
+                <p class="text-xs text-slate-300 px-4" id="success-modal-desc">เย้! คุณคิดค้นขั้นตอนแก้ปัญหาและช่วยเจ้าหุ่นยนต์ Byte ได้อย่างยอดเยี่ยมสมศักดิ์ศรี!</p>
+
+                <!-- Points Gained Cards -->
+                <div class="grid grid-cols-3 gap-2 bg-slate-950 p-3 rounded-xl border border-slate-800">
+                    <div>
+                        <span class="block text-[10px] text-slate-400 uppercase">คะแนนได้รับ</span>
+                        <span class="font-extrabold text-blue-400" id="gained-points">+100</span>
+                    </div>
+                    <div class="border-l border-slate-800">
+                        <span class="block text-[10px] text-slate-400 uppercase">เหรียญใหม่</span>
+                        <span class="font-extrabold text-yellow-400" id="gained-coins">+50</span>
+                    </div>
+                    <div class="border-l border-slate-800">
+                        <span class="block text-[10px] text-slate-400 uppercase">EXP</span>
+                        <span class="font-extrabold text-pink-400" id="gained-xp">+80</span>
+                    </div>
+                </div>
+
+                <!-- Alert for newly unlocked badges -->
+                <div id="badge-unlocked-banner" class="hidden bg-gradient-to-r from-pink-950 to-purple-950 p-3 rounded-lg border border-pink-500/30 text-xs">
+                    <span class="font-black text-pink-300">🎉 ปลดล็อคเหรียญตราเกียรติยศใหม่!</span>
+                </div>
+
+                <div class="pt-2">
+                    <button onclick="closeSuccessModal()" class="w-full bg-gradient-to-r from-blue-500 to-pink-500 text-white font-extrabold py-3 rounded-xl shadow-lg active:scale-95 transition-all">
+                        เดินทางผจญภัยต่อ ✨
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 8. TEACHER PANEL / DASHBOARD MODAL -->
+        <section id="panel-teacher" class="hidden max-w-4xl mx-auto space-y-6">
+            <div class="bg-slate-900 p-6 rounded-2xl border border-indigo-500/30">
+                <div class="flex justify-between items-center mb-6">
+                    <div class="flex items-center space-x-2">
+                        <i data-lucide="shield-check" class="text-indigo-400 w-6 h-6"></i>
+                        <h3 class="font-black text-white text-xl">แดชบอร์ดคุณครูวิทยาการคำนวณ (Teacher Dashboard)</h3>
+                    </div>
+                    <button onclick="toggleTeacherPanel()" class="bg-slate-800 text-slate-300 hover:text-white px-3 py-1 rounded text-xs">ปิดหน้านี้ ✕</button>
+                </div>
+
+                <!-- Teacher Controls -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                        <h4 class="font-bold text-xs text-slate-300 uppercase tracking-wide mb-2">ปรับระดับความยาก (Difficulty Level)</h4>
+                        <div class="space-y-2">
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="radio" name="difficulty" value="easy" onchange="changeDifficulty('easy')" class="text-indigo-600">
+                                <span class="text-xs font-semibold text-emerald-400">ง่าย (คำใบ้เพียบ, ข้อสอบพื้นฐาน ป.4)</span>
+                            </label>
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="radio" name="difficulty" value="medium" checked onchange="changeDifficulty('medium')" class="text-indigo-600">
+                                <span class="text-xs font-semibold text-yellow-400">ปานกลาง (มีเวลาจำกัด, สอดคล้องตัวชี้วัด ป.4)</span>
+                            </label>
+                            <label class="flex items-center space-x-2 cursor-pointer">
+                                <input type="radio" name="difficulty" value="hard" onchange="changeDifficulty('hard')" class="text-indigo-600">
+                                <span class="text-xs font-semibold text-rose-400">ยาก (ลับสมองประลองตรรกะระดับสูง)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
+                        <div>
+                            <h4 class="font-bold text-xs text-slate-300 uppercase tracking-wide mb-2">ส่งออกข้อมูลคะแนน (Export Report)</h4>
+                            <p class="text-[11px] text-slate-400 mb-4">ดาวน์โหลดข้อมูลสถิติของเด็กในห้องเรียนไปวิเคราะห์ในโปรแกรม Excel</p>
+                        </div>
+                        <button onclick="exportScoresToCSV()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded-lg text-xs flex items-center justify-center gap-1">
+                            <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
+                            <span>Export คะแนน .CSV</span>
+                        </button>
+                    </div>
+
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
+                        <div>
+                            <h4 class="font-bold text-xs text-slate-300 uppercase tracking-wide mb-2">กล่องควบคุมด่วนห้องเรียน</h4>
+                            <p class="text-[11px] text-slate-400 mb-4">เพิ่ม/จำลองรายชื่อนักเรียนในห้องเพื่อทดสอบระบบและสถิติภาพรวม</p>
+                        </div>
+                        <button onclick="addMockStudent()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2 rounded-lg text-xs flex items-center justify-center gap-1">
+                            <i data-lucide="user-plus" class="w-4 h-4"></i>
+                            <span>จำลองสถิตินักเรียนเพิ่ม +</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Student Grades & Metrics Table -->
+                <div class="bg-slate-950 rounded-xl border border-slate-800 overflow-hidden">
+                    <div class="p-4 bg-slate-900 border-b border-slate-800 flex justify-between items-center">
+                        <h4 class="font-black text-sm text-indigo-200">รายชื่อนักเรียนและผลประเมินผลการเรียนรู้ผ่านเกม</h4>
+                        <span class="text-xs text-indigo-400 font-bold" id="teacher-student-count">จำนวนนักเรียนทั้งหมด: 0 คน</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs text-slate-300">
+                            <thead class="bg-slate-900/60 text-slate-400 font-bold uppercase text-[10px]">
+                                <tr>
+                                    <th class="px-4 py-3">รหัส / ชื่อผู้เล่น</th>
+                                    <th class="px-4 py-3 text-center">ห้องเรียน</th>
+                                    <th class="px-4 py-3 text-center">ความก้าวหน้าด่าน</th>
+                                    <th class="px-4 py-3 text-right">คะแนน (Points)</th>
+                                    <th class="px-4 py-3 text-right">เหรียญตรา (Badges)</th>
+                                    <th class="px-4 py-3 text-right">การจัดการ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="teacher-students-list">
+                                <!-- Dynamic List -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-950 py-4 border-t border-slate-900 px-4 mt-8">
+        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3 text-xs text-slate-500 font-medium">
+            <p>© 2026 Byte's Cyber Quest. ออกแบบมาเพื่อเป็นสื่อการสอนวิทยาการคำนวณ ป.4 ตามหลักสูตรไทย</p>
+            <div class="flex space-x-4">
+                <a href="#" class="hover:text-slate-300">คู่มือครู</a>
+                <a href="#" class="hover:text-slate-300">แผนการจัดการเรียนรู้</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- GAME LOGIC SCRIPT -->
+    <script>
+        // GLOBAL GAME STATES (Default in-memory)
+        let players = [
+            { id: "1", name: "นายนิรนาม แสนกล", classroom: "4/1", level: 3, points: 550, coins: 200, xp: 210, badges: ["คิดเป็นขั้นตอน", "นักโปรแกรม"], progress: 3 },
+            { id: "2", name: "เด็กหญิงสมปอง ยอดฉลาด", classroom: "4/2", level: 4, points: 920, coins: 340, xp: 450, badges: ["คิดเป็นขั้นตอน", "นักโปรแกรม", "เซียนตรรกะ", "ผู้ชนะบอส"], progress: 5 },
+            { id: "3", name: "เด็กชายปีเตอร์ โปรแกรมเมอร์", classroom: "4/1", level: 2, points: 320, coins: 120, xp: 120, badges: ["คิดเป็นขั้นตอน"], progress: 2 },
+            { id: "4", name: "น้องบีม ขยันเรียน", classroom: "4/3", level: 1, points: 150, coins: 50, xp: 80, badges: [], progress: 1 }
+        ];
+
+        let currentPlayer = null;
+        let selectedDifficulty = 'medium'; // easy, medium, hard
+        let currentLevel = 0;
+        let dailyMissionClaimed = false;
+
+        // Current Quiz database for Level 4 Boss Battle
+        const bossQuizzes = {
+            easy: [
+                {
+                    question: "หากต้องการให้หุ่นยนต์เดินเข้าตู้เสื้อผ้า ข้อใดคือขั้นตอนการจัดเรียงที่ถูกต้องที่สุด?",
+                    options: [
+                        "เปิดตู้ -> ก้าวเท้าเข้าไป -> ปิดตู้",
+                        "ก้าวเท้าเข้าไป -> เปิดตู้ -> ปิดตู้",
+                        "ปิดตู้ -> เปิดตู้ -> ก้าวเท้าเข้าไป"
+                    ],
+                    answer: 0,
+                    points: 100,
+                    explanation: "การลากเปิดตู้เสื้อผ้าจำเป็นต้องทำเป็นอันดับแรกก่อนจะเข้าตู้"
+                },
+                {
+                    question: "ข้อใดคือการทำงานซ้ำในชีวิตประจำวัน?",
+                    options: [
+                        "การตักข้าวเข้าปากคำแล้วคำเล่าจนกว่าจะอิ่ม",
+                        "การตื่นนอนในตอนเช้า",
+                        "การเปิดโทรทัศน์ดูการ์ตูน"
+                    ],
+                    answer: 0,
+                    points: 100,
+                    explanation: "การตักข้าวซ้ำหลายรอบจนอิ่มถือเป็นลูปซ้ำที่มีเงื่อนไขจำกัด"
+                }
+            ],
+            medium: [
+                {
+                    question: "คุณพ่อเจอปัญหาว่า 'รถยนต์ยางแบน' สเต็ปแรกที่ควรทำตามแนวคิดวิเคราะห์แก้ปัญหาแบบเป็นขั้นเป็นตอนคือข้อใด?",
+                    options: [
+                        "นำแม่แรงมายกเพื่อเปลี่ยนล้ออะไหล่ทันที",
+                        "สังเกตรอยตะปูเรือใบหรือลมรั่ว ตรวจหาจุดที่ยางแบน",
+                        "ขับรถไปฝืนลุยต่อเพื่อตามหาอู่ซ่อม"
+                    ],
+                    answer: 1,
+                    points: 150,
+                    explanation: "การหาสาเหตุวิเคราะห์ปัญหาวิเคราะห์ระบบก่อนตัดสินใจลงมือแก้"
+                },
+                {
+                    question: "สัญลักษณ์ผังงาน (Flowchart) รูปทรงสี่เหลี่ยมผืนผ้า (Rectangle) หมายถึงอะไร?",
+                    options: [
+                        "จุดเริ่มต้นหรือจุดสิ้นสุดกระบวนการ",
+                        "การประมวลผลหรือปฏิบัติงาน (Process)",
+                        "การตัดสินใจตรวจสอบเงื่อนไข (Decision)"
+                    ],
+                    answer: 1,
+                    points: 150,
+                    explanation: "สี่เหลี่ยมผืนผ้า หมายถึง กระบวนการทำงาน (Process)"
+                },
+                {
+                    question: "ในการจัดกระเป๋านักเรียนตามตารางเรียนวิชาวิทยาการคำนวณ จัดเป็นแนวคิดแก้ปัญหาแบบใด?",
+                    options: [
+                        "การคิดแบบมีแบบแผนและแบ่งย่อยปัญหา",
+                        "การปล่อยตามดวงชะตา",
+                        "การทำไปโดยไม่ต้องมีเหตุผลเชิงตรรกะมารองรับ"
+                    ],
+                    answer: 0,
+                    points: 150,
+                    explanation: "การจัดอย่างมีระบบเป็นอัลกอริทึมแบ่งขั้นตอนทำงาน"
+                }
+            ],
+            hard: [
+                {
+                    question: "ถ้า 'สุนัขกินไก่' และ 'ไก่กินหนอน' ส่วน 'หนอนไม่กินใบไม้' ถ้าระบบนิเวศน์นี้ต้องการกำจัดผู้ทำลายใบไม้มากที่สุด อัลกอริทึมที่ดีคือ?",
+                    options: [
+                        "เพิ่มจำนวนไก่ เพื่อไปควบคุมและลดจำนวนหนอน",
+                        "เพิ่มจำนวนสุนัข เพื่อลดปริมาณสัตว์กินใบไม้",
+                        "กวาดล้างหนอนทั้งหมดด้วยเคมีรุนแรงจนดินเสีย"
+                    ],
+                    answer: 0,
+                    points: 200,
+                    explanation: "การเพิ่มตัวควบคุมธรรมชาติเป็นวิธีแก้ปัญหาเชิงตรรกะที่ดีที่สุด"
+                },
+                {
+                    question: "ถ้าโปรแกรมทำงานแบบลูปมีเงื่อนไข 'ตราบใดที่ พลังชีวิตบอส > 0 ให้ทายคำถามต่อไป' ข้อความใดเป็นความจริงเมื่อออกจากลูป?",
+                    options: [
+                        "พลังชีวิตบอสเท่ากับศูนย์หรือติดลบ",
+                        "ผู้เล่นตอบคำถามได้ถูกต้องเพียงข้อเดียว",
+                        "เกิดบั๊กขึ้นในระบบคอมพิวเตอร์"
+                    ],
+                    answer: 0,
+                    points: 200,
+                    explanation: "เมื่อหลุดจากเงื่อนไขแสดงว่าเงื่อนไข 'พลังชีวิตบอส > 0' ไม่เป็นจริงอีกต่อไปแล้ว"
+                }
+            ]
         };
 
-        const DATA_THAI = [
-            { char: 'ก', img: '🐔', name: 'ไก่' },
-            { char: 'ข', img: '🥚', name: 'ไข่' },
-            { char: 'ค', img: '🐃', name: 'ควาย' },
-            { char: 'ง', img: '🐍', name: 'งู' },
-            { char: 'จ', img: '🍽️', name: 'จาน' },
-            { char: 'ฉ', img: '🥁', name: 'ฉิ่ง' },
-            { char: 'ช', img: '🐘', name: 'ช้าง' }
-        ];
+        let currentQuizIndex = 0;
+        let currentBossHp = 100;
 
-        const DATA_ABC = [
-            { char: 'A', img: '🍎', name: 'Apple' },
-            { char: 'B', img: '🐝', name: 'Bee' },
-            { char: 'C', img: '🐱', name: 'Cat' },
-            { char: 'D', img: '🐶', name: 'Dog' }
-        ];
+        // INIT GAME ON LOAD
+        window.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            // Show login screen first
+            showScreen('screen-login');
+            updateLeaderboard();
+            updateTeacherStudentsList();
+        });
 
-        // --- Core Functions ---
-
-        function startGame() {
-            const name = document.getElementById('input-name').value;
-            if (!name) return alert('กรุณาใส่ชื่อก่อนจ้า 😊');
-            
-            gameState.player.name = name;
-            gameState.player.class = document.getElementById('input-class').value;
-            gameState.player.no = document.getElementById('input-no').value;
-
-            document.getElementById('ui-player-name').innerText = name;
-            document.getElementById('ui-overlay').classList.remove('hidden');
-            
-            savePlayer();
-            switchScreen('screen-menu');
-        }
-
-        function switchScreen(screenId) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
-        }
-
-        function loadModule(module) {
-            gameState.currentModule = module;
-            gameState.currentStep = 0;
-            gameState.score = 0;
-            updateProgress();
-            nextQuestion();
-            switchScreen('screen-game');
-        }
-
-        function nextQuestion() {
-            if (gameState.currentStep >= gameState.totalSteps) {
-                showResults();
-                return;
-            }
-
-            const dataSet = gameState.currentModule === 'abc' ? DATA_ABC : DATA_THAI;
-            const correct = dataSet[Math.floor(Math.random() * dataSet.length)];
-            
-            document.getElementById('target-display').innerText = correct.char;
-            
-            // Generate options
-            let options = [correct];
-            while (options.length < 4) {
-                let random = dataSet[Math.floor(Math.random() * dataSet.length)];
-                if (!options.find(o => o.char === random.char)) options.push(random);
-            }
-            options.sort(() => Math.random() - 0.5);
-
-            const grid = document.getElementById('options-grid');
-            grid.innerHTML = '';
-            options.forEach(opt => {
-                const btn = document.createElement('button');
-                btn.className = "bg-blue-50 p-6 rounded-2xl border-4 border-blue-100 hover:border-blue-400 text-4xl transition-all btn-bounce";
-                btn.innerHTML = `<div>${opt.img}</div><div class="text-sm mt-1 text-gray-500 font-bold">${opt.name}</div>`;
-                btn.onclick = () => checkAnswer(opt.char === correct.char, btn);
-                grid.appendChild(btn);
+        // SCREEN NAVIGATOR
+        function showScreen(screenId) {
+            // Hide all screens
+            const screens = ['screen-login', 'screen-hub', 'screen-lvl-1', 'screen-lvl-2', 'screen-lvl-3', 'screen-lvl-4', 'panel-teacher'];
+            screens.forEach(s => {
+                document.getElementById(s).classList.add('hidden');
             });
-        }
 
-        function checkAnswer(isCorrect, btn) {
-            if (isCorrect) {
-                playSound('correct');
-                btn.classList.replace('border-blue-100', 'border-green-400');
-                btn.classList.add('bg-green-50');
-                gameState.player.stars += 1;
-                gameState.player.coins += 5;
-                gameState.score += 1;
-                createConfetti();
-                
-                setTimeout(() => {
-                    gameState.currentStep++;
-                    updateProgress();
-                    updateUI();
-                    nextQuestion();
-                }, 800);
+            // Show current screen
+            document.getElementById(screenId).classList.remove('hidden');
+
+            // Header stats visibility control
+            const stats = document.getElementById('header-stats');
+            if (screenId === 'screen-login') {
+                stats.classList.add('invisible');
             } else {
-                playSound('wrong');
-                btn.classList.add('animate-shake', 'bg-red-50', 'border-red-300');
-                setTimeout(() => btn.classList.remove('bg-red-50', 'border-red-300'), 500);
+                stats.classList.remove('invisible');
+                updateHeaderStats();
             }
-        }
-
-        function updateProgress() {
-            const percent = (gameState.currentStep / gameState.totalSteps) * 100;
-            document.getElementById('game-progress').style.width = percent + '%';
-        }
-
-        function updateUI() {
-            document.getElementById('ui-stars').innerText = '⭐ ' + gameState.player.stars;
-            document.getElementById('ui-coins').innerText = '🪙 ' + gameState.player.coins;
-        }
-
-        function showResults() {
-            document.getElementById('result-name').innerText = `${gameState.player.name} (${gameState.player.class})`;
-            document.getElementById('result-stars').innerText = gameState.score;
-            document.getElementById('result-coins').innerText = gameState.score * 5;
-            saveStats();
-            switchScreen('screen-result');
         }
 
         function goHome() {
-            switchScreen('screen-menu');
-        }
-
-        // --- Sound & Effects ---
-        function toggleSound() {
-            gameState.isMuted = !gameState.isMuted;
-            document.getElementById('sound-btn').innerText = gameState.isMuted ? '🔇' : '🔊';
-        }
-
-        function playSound(type) {
-            if (gameState.isMuted) return;
-            // Native synthesis for accessibility
-            const msg = new SpeechSynthesisUtterance();
-            msg.lang = 'th-TH';
-            if (type === 'correct') {
-                msg.text = 'เก่งมากจ้า';
-            } else if (type === 'wrong') {
-                msg.text = 'ลองใหม่นะ';
-            }
-            window.speechSynthesis.speak(msg);
-        }
-
-        function createConfetti() {
-            for (let i = 0; i < 20; i++) {
-                const c = document.createElement('div');
-                c.className = 'confetti';
-                c.style.left = Math.random() * 100 + 'vw';
-                c.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
-                c.style.animationDelay = Math.random() * 2 + 's';
-                document.body.appendChild(c);
-                setTimeout(() => c.remove(), 3000);
+            playSound('click');
+            if (currentPlayer) {
+                showScreen('screen-hub');
+            } else {
+                showScreen('screen-login');
             }
         }
 
-        // --- Data Persistence ---
-        function savePlayer() {
-            localStorage.setItem('thai_quest_player', JSON.stringify(gameState.player));
+        function goHub() {
+            playSound('click');
+            showScreen('screen-hub');
+            updateHubView();
         }
 
-        function saveStats() {
-            let history = JSON.parse(localStorage.getItem('thai_quest_history') || '[]');
-            history.push({
-                ...gameState.player,
-                timestamp: new Date().toISOString(),
-                module: gameState.currentModule,
-                lastScore: gameState.score
+        // LOGIN PROCESS
+        function handleLogin(event) {
+            event.preventDefault();
+            const username = document.getElementById('input-username').value.trim();
+            const classroom = document.getElementById('input-classroom').value;
+
+            if (!username) return;
+
+            // Check if player already exists in mock list
+            let player = players.find(p => p.name.toLowerCase() === username.toLowerCase());
+            
+            if (!player) {
+                // Create new player
+                player = {
+                    id: String(players.length + 1),
+                    name: username,
+                    classroom: classroom,
+                    level: 1,
+                    points: 0,
+                    coins: 0,
+                    xp: 0,
+                    badges: [],
+                    progress: 1 // started at level 1
+                };
+                players.push(player);
+            }
+
+            currentPlayer = player;
+            playSound('correct');
+            goHub();
+        }
+
+        // UPDATE GENERAL STATS IN THE HEADER
+        function updateHeaderStats() {
+            if (!currentPlayer) return;
+            document.getElementById('stat-level').innerText = currentPlayer.level;
+            document.getElementById('stat-coins').innerText = currentPlayer.coins;
+            document.getElementById('stat-points').innerText = currentPlayer.points;
+            document.getElementById('stat-xp').innerText = `${currentPlayer.xp} XP`;
+        }
+
+        // HUB UPDATE (MAP & ACHIEVEMENTS)
+        function updateHubView() {
+            if (!currentPlayer) return;
+
+            // Progress Update
+            document.getElementById('hub-level').innerText = currentPlayer.level;
+            document.getElementById('hub-coins').innerText = currentPlayer.coins;
+            document.getElementById('hub-points').innerText = currentPlayer.points;
+            document.getElementById('hub-badges-count').innerText = currentPlayer.badges.length;
+
+            const nextLevelXp = currentPlayer.level * 100;
+            document.getElementById('hub-xp-progress').innerText = `${currentPlayer.xp} / ${nextLevelXp} XP`;
+
+            // Lock / Unlock stages based on student progress
+            updateStageLocks();
+
+            // Check Daily Mission Criteria
+            checkDailyMission();
+
+            // Refresh Badges Visuals
+            updateBadgesVisuals();
+
+            // Refresh Leaderboard
+            updateLeaderboard();
+        }
+
+        function updateStageLocks() {
+            const progress = currentPlayer.progress;
+
+            // Level 2
+            const cardLvl2 = document.getElementById('card-lvl-2');
+            const badgeLvl2 = document.getElementById('badge-lvl-2');
+            const btnLvl2 = document.getElementById('btn-lvl-2');
+            if (progress >= 2) {
+                cardLvl2.className = "bg-slate-950 p-4 rounded-xl border border-pink-500/40 relative z-10 flex flex-col justify-between hover:scale-[1.02] transition-all duration-200";
+                badgeLvl2.className = "text-pink-400 text-xs flex items-center gap-1 font-bold";
+                badgeLvl2.innerHTML = `<i data-lucide="unlock" class="w-3 h-3"></i> ปลดล็อคแล้ว`;
+                btnLvl2.disabled = false;
+                btnLvl2.className = "w-full bg-pink-600 hover:bg-pink-500 text-white font-bold py-2 rounded-lg text-xs";
+                btnLvl2.innerText = "เริ่มท้าทาย 🎮";
+            }
+
+            // Level 3
+            const cardLvl3 = document.getElementById('card-lvl-3');
+            const badgeLvl3 = document.getElementById('badge-lvl-3');
+            const btnLvl3 = document.getElementById('btn-lvl-3');
+            if (progress >= 3) {
+                cardLvl3.className = "bg-slate-950 p-4 rounded-xl border border-purple-500/40 relative z-10 flex flex-col justify-between hover:scale-[1.02] transition-all duration-200";
+                badgeLvl3.className = "text-purple-400 text-xs flex items-center gap-1 font-bold";
+                badgeLvl3.innerHTML = `<i data-lucide="unlock" class="w-3 h-3"></i> ปลดล็อคแล้ว`;
+                btnLvl3.disabled = false;
+                btnLvl3.className = "w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-2 rounded-lg text-xs";
+                btnLvl3.innerText = "เริ่มท้าทาย 🎮";
+            }
+
+            // Level 4 (Boss)
+            const cardLvl4 = document.getElementById('card-lvl-4');
+            const badgeLvl4 = document.getElementById('badge-lvl-4');
+            const btnLvl4 = document.getElementById('btn-lvl-4');
+            if (progress >= 4) {
+                cardLvl4.className = "bg-slate-950 p-4 rounded-xl border border-amber-500/40 relative z-10 flex flex-col justify-between hover:scale-[1.02] transition-all duration-200 neon-border-pink";
+                badgeLvl4.className = "text-amber-400 text-xs flex items-center gap-1 font-black animate-pulse";
+                badgeLvl4.innerHTML = `<i data-lucide="zap" class="w-3 h-3 text-red-500"></i> พร้อมท้าสู้`;
+                btnLvl4.disabled = false;
+                btnLvl4.className = "w-full bg-gradient-to-r from-red-600 to-amber-500 hover:from-red-500 hover:to-amber-400 text-white font-black py-2 rounded-lg text-xs animate-glow";
+                btnLvl4.innerText = "สู้บอสเดือด 👾";
+            }
+
+            lucide.createIcons();
+        }
+
+        // LEADERBOARD UPDATER
+        function updateLeaderboard() {
+            const sorted = [...players].sort((a, b) => b.points - a.points);
+            const body = document.getElementById('leaderboard-body');
+            body.innerHTML = '';
+
+            sorted.forEach((p, idx) => {
+                const isCurrent = currentPlayer && p.id === currentPlayer.id;
+                const row = document.createElement('tr');
+                row.className = `${isCurrent ? 'bg-indigo-950/40 text-indigo-200 font-bold border-indigo-800' : 'hover:bg-slate-900 border-slate-800/50'} border-b`;
+                
+                let medal = `${idx + 1}`;
+                if (idx === 0) medal = '🥇';
+                else if (idx === 1) medal = '🥈';
+                else if (idx === 2) medal = '🥉';
+
+                row.innerHTML = `
+                    <td class="px-4 py-3 font-bold">${medal}</td>
+                    <td class="px-4 py-3 flex items-center space-x-2">
+                        <span>${p.name}</span>
+                        ${isCurrent ? '<span class="bg-blue-500 text-[9px] text-white px-1.5 py-0.2 rounded">คุณ</span>' : ''}
+                    </td>
+                    <td class="px-4 py-3 text-center text-slate-400">${p.classroom}</td>
+                    <td class="px-4 py-3 text-right text-amber-400 font-bold">${p.level}</td>
+                    <td class="px-4 py-3 text-right text-blue-400 font-extrabold">${p.points}</td>
+                `;
+                body.appendChild(row);
             });
-            localStorage.setItem('thai_quest_history', JSON.stringify(history));
         }
 
-        // --- Admin Dash ---
-        function showAdmin() {
-            const pass = prompt('ใส่รหัสผ่านคุณครู:');
-            if (pass === 'admin1234') {
-                renderAdminTable();
-                switchScreen('screen-admin');
+        // DAILY MISSIONS SYSTEM
+        function checkDailyMission() {
+            const btnClaim = document.getElementById('btn-claim-daily');
+            const claimText = document.getElementById('daily-claimed');
+
+            if (dailyMissionClaimed) {
+                btnClaim.classList.add('hidden');
+                claimText.classList.remove('hidden');
+            } else if (currentPlayer.progress >= 3) { // completed lvl 1 & 2
+                btnClaim.classList.remove('hidden');
+                claimText.classList.add('hidden');
+            } else {
+                btnClaim.classList.add('hidden');
+                claimText.classList.add('hidden');
             }
         }
 
-        function renderAdminTable() {
-            const history = JSON.parse(localStorage.getItem('thai_quest_history') || '[]');
-            const tbody = document.getElementById('admin-table-body');
-            tbody.innerHTML = history.map(h => `
-                <tr class="border-b">
-                    <td class="p-2">${h.name}</td>
-                    <td class="p-2">${h.class || '-'}</td>
-                    <td class="p-2">${h.stars}</td>
-                    <td class="p-2 font-bold">${h.lastScore}/${gameState.totalSteps}</td>
-                </tr>
-            `).join('');
+        function claimDailyBonus() {
+            if (!currentPlayer) return;
+            currentPlayer.coins += 50;
+            currentPlayer.points += 50;
+            dailyMissionClaimed = true;
+            playSound('correct');
+            updateHubView();
         }
 
-        function clearData() {
-            if(confirm('ลบข้อมูลนักเรียนทั้งหมด?')) {
-                localStorage.clear();
-                alert('ลบเรียบร้อย');
-                window.location.reload();
+        // UPDATING BADGE VISUALS
+        function updateBadgesVisuals() {
+            if (!currentPlayer) return;
+            const userBadges = currentPlayer.badges;
+
+            const badgesMap = [
+                { id: 'badge-icon-1', name: 'คิดเป็นขั้นตอน', colorClass: 'bg-blue-600/20 text-blue-400 border-blue-500' },
+                { id: 'badge-icon-2', name: 'นักโปรแกรม', colorClass: 'bg-pink-600/20 text-pink-400 border-pink-500' },
+                { id: 'badge-icon-3', name: 'เซียนตรรกะ', colorClass: 'bg-purple-600/20 text-purple-400 border-purple-500' },
+                { id: 'badge-icon-4', name: 'ผู้ชนะบอส', colorClass: 'bg-amber-600/20 text-amber-400 border-amber-500 animate-bounce' }
+            ];
+
+            badgesMap.forEach(b => {
+                const element = document.getElementById(b.id);
+                if (userBadges.includes(b.name)) {
+                    element.className = `w-12 h-12 mx-auto rounded-full flex items-center justify-center border-2 ${b.colorClass} shadow-lg shadow-indigo-500/10`;
+                    const icon = element.querySelector('i');
+                    if (icon) icon.className = "w-6 h-6";
+                } else {
+                    element.className = "w-12 h-12 mx-auto rounded-full bg-slate-800/80 flex items-center justify-center border border-slate-700";
+                    const icon = element.querySelector('i');
+                    if (icon) icon.className = "w-6 h-6 text-slate-600";
+                }
+            });
+        }
+
+        // START LEVEL LOGIC
+        function startLevel(lvl) {
+            currentLevel = lvl;
+            playSound('click');
+            if (lvl === 1) {
+                initLvl1();
+                showScreen('screen-lvl-1');
+            } else if (lvl === 2) {
+                initLvl2();
+                showScreen('screen-lvl-2');
+            } else if (lvl === 3) {
+                initLvl3();
+                showScreen('screen-lvl-3');
+            } else if (lvl === 4) {
+                initLvl4();
+                showScreen('screen-lvl-4');
             }
         }
 
-        function exportData() {
-            const history = localStorage.getItem('thai_quest_history') || '[]';
-            const blob = new Blob([history], {type: 'text/json'});
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = 'student_data.json';
-            a.click();
+        // ==========================================
+        // LEVEL 1: DRAG & DROP ALGORITHM DETAILS
+        // ==========================================
+        let lvl1Steps = [
+            { id: 'step-3', text: 'บีบยาสีฟันขนาดเมล็ดถั่วเขียวลงบนแปรง 🧴' },
+            { id: 'step-1', text: 'เตรียมแปรงสีฟันและยาสีฟันสูตรฟลูออไรด์ 🪥' },
+            { id: 'step-5', text: 'บ้วนปากด้วยน้ำสะอาดให้หมดฟอง 💧' },
+            { id: 'step-4', text: 'แปรงฟันทุกซี่ให้ทั่วอย่างเบามือเป็นเวลา 2 นาที 🦷' },
+            { id: 'step-2', text: 'บ้วนปากด้วยน้ำสะอาดก่อนเริ่มแปรงครั้งแรก 🧼' },
+            { id: 'step-6', text: 'ล้างทำความสะอาดแปรงและเก็บเข้าที่ให้เรียบร้อย 🧹' }
+        ];
+
+        // The exact correct chronological order IDs
+        const correctLvl1Order = ['step-1', 'step-2', 'step-3', 'step-4', 'step-5', 'step-6'];
+
+        function initLvl1() {
+            // Shuffle arrays for gameplay
+            const shuffled = [...lvl1Steps].sort(() => Math.random() - 0.5);
+            const container = document.getElementById('drag-items');
+            container.innerHTML = '';
+
+            shuffled.forEach((step) => {
+                const div = document.createElement('div');
+                div.className = "bg-slate-950 p-4 rounded-xl border border-slate-800 flex items-center justify-between cursor-move hover:border-blue-500/50 transition-all select-none";
+                div.draggable = true;
+                div.dataset.id = step.id;
+                div.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <i data-lucide="grip-vertical" class="w-4 h-4 text-slate-500"></i>
+                        <span class="text-xs sm:text-sm font-semibold text-slate-200">${step.text}</span>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+
+            addDragAndDropListeners();
+            lucide.createIcons();
         }
 
-        // Init
-        window.onload = () => {
-            console.log("🇹🇭 ผจญภัยอาณาจักรพยัญชนะไทย พร้อมสนุก!");
-            // Smooth animations for mobile safari
-            document.body.addEventListener('touchstart', () => {}, {passive: true});
-        };
+        // Add pure drag and drop listeners with touch support compatibility
+        let dragSourceElement = null;
+
+        function addDragAndDropListeners() {
+            const items = document.querySelectorAll('#drag-items > div');
+            items.forEach(item => {
+                item.addEventListener('dragstart', handleDragStart, false);
+                item.addEventListener('dragenter', handleDragEnter, false);
+                item.addEventListener('dragover', handleDragOver, false);
+                item.addEventListener('dragleave', handleDragLeave, false);
+                item.addEventListener('drop', handleDrop, false);
+                item.addEventListener('dragend', handleDragEnd, false);
+
+                // Touch Events fallback for iPads & Mobile Screens
+                item.addEventListener('touchstart', handleTouchStart, false);
+                item.addEventListener('touchmove', handleTouchMove, false);
+                item.addEventListener('touchend', handleTouchEnd, false);
+            });
+        }
+
+        function handleDragStart(e) {
+            dragSourceElement = this;
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', this.innerHTML);
+            e.dataTransfer.setData('text/plain', this.dataset.id);
+            this.classList.add('opacity-50');
+        }
+
+        function handleDragOver(e) {
+            if (e.preventDefault) {
+                e.preventDefault();
+            }
+            e.dataTransfer.dropEffect = 'move';
+            return false;
+        }
+
+        function handleDragEnter(e) {
+            this.classList.add('border-blue-500');
+        }
+
+        function handleDragLeave(e) {
+            this.classList.remove('border-blue-500');
+        }
+
+        function handleDrop(e) {
+            if (e.stopPropagation) {
+                e.stopPropagation();
+            }
+
+            if (dragSourceElement !== this) {
+                // Swap values
+                const sourceHtml = dragSourceElement.innerHTML;
+                const sourceId = dragSourceElement.dataset.id;
+
+                dragSourceElement.innerHTML = this.innerHTML;
+                dragSourceElement.dataset.id = this.dataset.id;
+
+                this.innerHTML = sourceHtml;
+                this.dataset.id = sourceId;
+            }
+            return false;
+        }
+
+        function handleDragEnd(e) {
+            const items = document.querySelectorAll('#drag-items > div');
+            items.forEach(item => {
+                item.classList.remove('opacity-50', 'border-blue-500');
+            });
+            lucide.createIcons();
+        }
+
+        // Touch event fallbacks
+        let touchStartId = null;
+        let activeTouchElement = null;
+
+        function handleTouchStart(e) {
+            activeTouchElement = this;
+            touchStartId = this.dataset.id;
+            this.classList.add('bg-slate-900', 'border-blue-500');
+        }
+
+        function handleTouchMove(e) {
+            e.preventDefault(); // Stop scrolling during drag
+        }
+
+        function handleTouchEnd(e) {
+            if (!activeTouchElement) return;
+            activeTouchElement.classList.remove('bg-slate-900', 'border-blue-500');
+
+            // Find target element beneath touch end
+            const changedTouch = e.changedTouches[0];
+            const targetElement = document.elementFromPoint(changedTouch.clientX, changedTouch.clientY);
+            const parentItem = targetElement ? targetElement.closest('#drag-items > div') : null;
+
+            if (parentItem && parentItem !== activeTouchElement) {
+                // Swap data
+                const sourceHtml = activeTouchElement.innerHTML;
+                const sourceId = activeTouchElement.dataset.id;
+
+                activeTouchElement.innerHTML = parentItem.innerHTML;
+                activeTouchElement.dataset.id = parentItem.dataset.id;
+
+                parentItem.innerHTML = sourceHtml;
+                parentItem.dataset.id = sourceId;
+                lucide.createIcons();
+            }
+            activeTouchElement = null;
+        }
+
+        function checkLvl1Answer() {
+            const items = document.querySelectorAll('#drag-items > div');
+            const currentOrder = Array.from(items).map(item => item.dataset.id);
+
+            let isCorrect = true;
+            for (let i = 0; i < correctLvl1Order.length; i++) {
+                if (currentOrder[i] !== correctLvl1Order[i]) {
+                    isCorrect = false;
+                    break;
+                }
+            }
+
+            if (isCorrect) {
+                triggerSuccessModal(
+                    "ยินดีด้วย! ลำดับความเร็วจัดเป็นระเบียบสุดยอด",
+                    100, 50, 80,
+                    "คิดเป็นขั้นตอน"
+                );
+                if (currentPlayer.progress === 1) {
+                    currentPlayer.progress = 2; // Unlock level 2
+                }
+            } else {
+                playSound('wrong');
+                // Give dynamic guidance
+                alertCustom("ลำดับขั้นตอนยังสลับอยู่นะครับ! ยาสีฟันต้องบีบลงแปรงก่อนที่จะเริ่มต้นแปรงฟัน 2 นาทีนะครับ ลองใหม่อีกครั้ง!");
+            }
+        }
+
+        // ==========================================
+        // LEVEL 2: MAZE PATH WRITING
+        // ==========================================
+        // Grid coordinates: 5x5 grid. Start: (0,4) Bot bottom-left, Goal: (4,0) Top Right
+        // Path Map: 0 = Path, 1 = Barrier / Wall
+        const mazeMap = [
+            [1, 0, 0, 0, 0], // Row 0
+            [1, 1, 1, 1, 0], // Row 1
+            [0, 0, 0, 0, 0], // Row 2
+            [0, 1, 1, 1, 1], // Row 3
+            [0, 0, 0, 0, 1]  // Row 4
+        ];
+        
+        // Start: x=0, y=4, Dir: 0 (Up), 1 (Right), 2 (Down), 3 (Left)
+        let bytePos = { x: 0, y: 4 };
+        let byteDir = 0; 
+        let codeInstructions = [];
+
+        function initLvl2() {
+            codeInstructions = [];
+            resetMaze();
+            renderCodeStack();
+        }
+
+        function resetMaze() {
+            bytePos = { x: 0, y: 4 };
+            byteDir = 0; // facing North (Up)
+            renderMaze();
+        }
+
+        function renderMaze() {
+            const grid = document.getElementById('maze-grid');
+            grid.innerHTML = '';
+
+            for (let r = 0; r < 5; r++) {
+                for (let c = 0; c < 5; c++) {
+                    const cell = document.createElement('div');
+                    cell.className = "rounded flex items-center justify-center font-bold text-xs relative select-none ";
+
+                    // Cell Backgrounds
+                    if (mazeMap[r][c] === 1) {
+                        cell.className += "bg-slate-800 border border-slate-700 text-slate-500";
+                        cell.innerHTML = '⚡'; // electrical block hazard
+                    } else {
+                        cell.className += "bg-slate-900 border border-slate-950/40 text-slate-700";
+                    }
+
+                    // Start Point Indicator
+                    if (r === 4 && c === 0) {
+                        cell.className += " bg-blue-950/60 ring-1 ring-blue-500";
+                    }
+
+                    // Goal Point Indicator
+                    if (r === 0 && c === 4) {
+                        cell.className += " bg-emerald-950/80 ring-2 ring-emerald-500";
+                        cell.innerHTML = '<span class="text-emerald-400 text-lg animate-pulse">★</span>';
+                    }
+
+                    // Robot Position Indicator
+                    if (bytePos.y === r && bytePos.x === c) {
+                        cell.className += " bg-pink-500/20 ring-4 ring-pink-500 scale-105 z-20";
+                        
+                        // Direction indicator
+                        let dirArrow = '↑';
+                        if (byteDir === 1) dirArrow = '→';
+                        if (byteDir === 2) dirArrow = '↓';
+                        if (byteDir === 3) dirArrow = '←';
+
+                        cell.innerHTML = `
+                            <div class="flex flex-col items-center justify-center">
+                                <span class="text-xs">🤖</span>
+                                <span class="text-[8px] text-pink-400 font-black">${dirArrow}</span>
+                            </div>
+                        `;
+                    }
+
+                    grid.appendChild(cell);
+                }
+            }
+        }
+
+        function addBlock(cmd) {
+            if (codeInstructions.length >= 6) {
+                playSound('wrong');
+                alertCustom("รหัสเกินลิมิต 6 คำสั่งแล้วครับสำหรับความต้องการของหน่วยความจำ Byte!");
+                return;
+            }
+            playSound('click');
+            codeInstructions.push(cmd);
+            renderCodeStack();
+        }
+
+        function removeBlock(idx) {
+            playSound('click');
+            codeInstructions.splice(idx, 1);
+            renderCodeStack();
+        }
+
+        function clearCodeStack() {
+            playSound('click');
+            codeInstructions = [];
+            renderCodeStack();
+        }
+
+        function renderCodeStack() {
+            const container = document.getElementById('code-stack');
+            container.innerHTML = '';
+
+            if (codeInstructions.length === 0) {
+                container.innerHTML = `
+                    <div class="text-xs text-slate-500 flex items-center justify-center h-full text-center py-8">
+                        ยังไม่มีคำสั่งลากใส่เลย <br>กดคลิกบล็อกด้านบนเพื่อจัดคำสั่งการเขียนโค้ด!
+                    </div>
+                `;
+                return;
+            }
+
+            codeInstructions.forEach((cmd, idx) => {
+                const div = document.createElement('div');
+                div.className = "flex items-center justify-between p-2 rounded-lg bg-slate-900 border border-slate-800 text-xs text-slate-200";
+                
+                let text = "เดินไปข้างหน้า";
+                let icon = "arrow-up";
+                let color = "text-blue-400";
+
+                if (cmd === 'TURN_LEFT') {
+                    text = "หันซ้าย ↺";
+                    icon = "arrow-left";
+                    color = "text-pink-400";
+                } else if (cmd === 'TURN_RIGHT') {
+                    text = "หันขวา ↻";
+                    icon = "arrow-right";
+                    color = "text-amber-400";
+                }
+
+                div.innerHTML = `
+                    <div class="flex items-center space-x-2">
+                        <span class="bg-slate-950 px-1.5 py-0.5 rounded text-[10px] text-slate-500 font-bold">${idx + 1}</span>
+                        <span class="${color} font-bold">${text}</span>
+                    </div>
+                    <button onclick="removeBlock(${idx})" class="text-slate-500 hover:text-rose-500 p-0.5">
+                        ✕
+                    </button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // Running commands stepwise
+        async function runMazeCode() {
+            if (codeInstructions.length === 0) {
+                alertCustom("โปรดสร้างโค้ดด้วยกล่องคำสั่งก่อนรันครับ!");
+                return;
+            }
+
+            resetMaze();
+            let isFailed = false;
+
+            for (let i = 0; i < codeInstructions.length; i++) {
+                const cmd = codeInstructions[i];
+                await delay(500); // 0.5s pause to see animation step by step
+
+                if (cmd === 'MOVE_FORWARD') {
+                    // Update pos based on direction
+                    let nextX = bytePos.x;
+                    let nextY = bytePos.y;
+
+                    if (byteDir === 0) nextY--; // Up
+                    if (byteDir === 1) nextX++; // Right
+                    if (byteDir === 2) nextY++; // Down
+                    if (byteDir === 3) nextX--; // Left
+
+                    // Boundary checking & barrier collision checking
+                    if (nextX < 0 || nextX > 4 || nextY < 0 || nextY > 4 || mazeMap[nextY][nextX] === 1) {
+                        playSound('wrong');
+                        isFailed = true;
+                        alertCustom(`💥 ชนขอบหรือสิ่งกีดขวางที่พิกัด (${nextX}, ${nextY})! ลองทบทวนจัดโค้ดคำสั่งใหม่อีกครั้งนะครับ!`);
+                        resetMaze();
+                        break;
+                    } else {
+                        bytePos.x = nextX;
+                        bytePos.y = nextY;
+                        playSound('laser');
+                        renderMaze();
+                    }
+                } else if (cmd === 'TURN_LEFT') {
+                    byteDir = (byteDir + 3) % 4; // rotate anticlockwise
+                    playSound('click');
+                    renderMaze();
+                } else if (cmd === 'TURN_RIGHT') {
+                    byteDir = (byteDir + 1) % 4; // rotate clockwise
+                    playSound('click');
+                    renderMaze();
+                }
+
+                // Check goal success
+                if (bytePos.x === 4 && bytePos.y === 0) {
+                    triggerSuccessModal(
+                        "สุดยอดนักเขียนโปรแกรม! พาพายออกสู่เขาวงกตเมืองล้ำยุคสำเร็จ",
+                        150, 60, 100,
+                        "นักโปรแกรม"
+                    );
+                    if (currentPlayer.progress === 2) {
+                        currentPlayer.progress = 3; // unlock level 3
+                    }
+                    break;
+                }
+            }
+
+            if (!isFailed && (bytePos.x !== 4 || bytePos.y !== 0)) {
+                playSound('wrong');
+                alertCustom("อ้าว! รันโปรแกรมเสร็จเรียบร้อยแล้วแต่ยังไม่ถึงดวงดาวเลยจ้า ลองหาทิศทางเดินที่สั้นที่สุดดูใหม่นะ!");
+            }
+        }
+
+        function delay(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // ==========================================
+        // LEVEL 3: LOGIC PUZZLE SELECTION
+        // ==========================================
+        let lvl3SelectedAnswer = "";
+
+        function initLvl3() {
+            lvl3SelectedAnswer = "";
+            // Reset visual selections
+            document.getElementById('opt-l3-1').className = "bg-slate-950 hover:bg-slate-850 border border-slate-800 hover:border-blue-500/50 p-4 rounded-xl text-center font-bold text-sm transition-all text-slate-300";
+            document.getElementById('opt-l3-2').className = "bg-slate-950 hover:bg-slate-850 border border-slate-800 hover:border-pink-500/50 p-4 rounded-xl text-center font-bold text-sm transition-all text-slate-300";
+            document.getElementById('opt-l3-3').className = "bg-slate-950 hover:bg-slate-850 border border-slate-800 hover:border-amber-500/50 p-4 rounded-xl text-center font-bold text-sm transition-all text-slate-300";
+        }
+
+        function selectLvl3Answer(ans) {
+            playSound('click');
+            lvl3SelectedAnswer = ans;
+
+            // highlight selection
+            const btn1 = document.getElementById('opt-l3-1');
+            const btn2 = document.getElementById('opt-l3-2');
+            const btn3 = document.getElementById('opt-l3-3');
+
+            btn1.className = ans === 'กระต่าย' ? "bg-blue-600/20 border-blue-500 text-white p-4 rounded-xl text-center font-bold text-sm transition-all" : "bg-slate-950 border border-slate-800 p-4 rounded-xl text-center font-bold text-sm transition-all text-slate-400";
+            btn2.className = ans === 'สุนัขจิ้งจอก' ? "bg-pink-600/20 border-pink-500 text-white p-4 rounded-xl text-center font-bold text-sm transition-all" : "bg-slate-950 border border-slate-800 p-4 rounded-xl text-center font-bold text-sm transition-all text-slate-400";
+            btn3.className = ans === 'กระรอก' ? "bg-amber-600/20 border-amber-500 text-white p-4 rounded-xl text-center font-bold text-sm transition-all" : "bg-slate-950 border border-slate-800 p-4 rounded-xl text-center font-bold text-sm transition-all text-slate-400";
+        }
+
+        function checkLvl3Answer() {
+            if (!lvl3SelectedAnswer) {
+                alertCustom("กรุณาเลือกหนึ่งสายพันธ์ของสัตว์เป็นผู้ต้องสงสัยก่อนส่งคำตอบครับ!");
+                return;
+            }
+
+            // Correct answer is "กระรอก"
+            // Explanation breakdown:
+            // Fox (🦊) is at house 1 (Pink)
+            // Left houses: House 2 & House 3. Colors left: Orange & Blue
+            // Rabbit (🐰) does not like Orange and doesn't live in house 1. So Rabbit must be in Blue house.
+            // Squirrel (🐿️) must live in Orange house.
+            if (lvl3SelectedAnswer === 'กระรอก') {
+                triggerSuccessModal(
+                    "เฉลยคำตอบได้สมเหตุสมผลจริง! กระรอกอาศัยอยู่ในบ้านสีส้มจริงๆ",
+                    150, 70, 100,
+                    "เซียนตรรกะ"
+                );
+                if (currentPlayer.progress === 3) {
+                    currentPlayer.progress = 4; // unlock level 4 (Boss)
+                }
+            } else {
+                playSound('wrong');
+                alertCustom("คำตอบยังไม่ถูกนะครับเพื่อนพ้อง! ลองอ่านเงื่อนไขใหม่อีกรอบดีๆ ว่าใครไม่ได้อยู่บ้านสีนั้นนะครับ!");
+            }
+        }
+
+        // ==========================================
+        // LEVEL 4: BOSS BATTLE (QUIZ SOLVING)
+        // ==========================================
+        function initLvl4() {
+            currentQuizIndex = 0;
+            currentBossHp = 100;
+            updateBossHealthBar();
+            loadBossQuestion();
+        }
+
+        function updateBossHealthBar() {
+            const hpBar = document.getElementById('boss-hp');
+            const hpText = document.getElementById('boss-hp-text');
+
+            hpBar.style.width = `${currentBossHp}%`;
+            hpText.innerText = `${currentBossHp} / 100 HP`;
+        }
+
+        function loadBossQuestion() {
+            const list = bossQuizzes[selectedDifficulty] || bossQuizzes['medium'];
+            const container = document.getElementById('boss-quiz-container');
+
+            if (currentQuizIndex >= list.length) {
+                // Defeated!
+                triggerBossDefeat();
+                return;
+            }
+
+            const activeQuiz = list[currentQuizIndex];
+
+            container.innerHTML = `
+                <div class="bg-slate-950 p-5 rounded-xl border border-slate-800">
+                    <span class="text-[10px] uppercase font-bold text-rose-500">คำถามข้อที่ ${currentQuizIndex + 1} / ${list.length}</span>
+                    <h4 class="font-extrabold text-white text-md mt-1 mb-4">${activeQuiz.question}</h4>
+                    <div class="space-y-2" id="boss-options">
+                        <!-- Options filled here -->
+                    </div>
+                </div>
+            `;
+
+            const optionsContainer = document.getElementById('boss-options');
+            activeQuiz.options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left bg-slate-900 hover:bg-slate-850 p-3.5 rounded-lg border border-slate-800 hover:border-pink-500/50 text-xs sm:text-sm text-slate-300 font-semibold transition-all flex items-center space-x-3";
+                btn.onclick = () => submitBossAnswer(index);
+                btn.innerHTML = `
+                    <span class="w-6 h-6 rounded-full bg-slate-950 flex items-center justify-center border border-slate-800 font-bold text-xs text-slate-400">${String.fromCharCode(65 + index)}</span>
+                    <span>${opt}</span>
+                `;
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function submitBossAnswer(selectedIdx) {
+            const list = bossQuizzes[selectedDifficulty] || bossQuizzes['medium'];
+            const activeQuiz = list[currentQuizIndex];
+
+            // Animate beam shoot effect
+            const beam = document.getElementById('laser-beam');
+            beam.classList.remove('hidden');
+            setTimeout(() => {
+                beam.classList.add('hidden');
+            }, 300);
+
+            if (selectedIdx === activeQuiz.answer) {
+                playSound('correct');
+                
+                // Damage calculation
+                const damage = 100 / list.length;
+                currentBossHp -= damage;
+                if (currentBossHp < 0) currentBossHp = 0;
+
+                updateBossHealthBar();
+                alertCustom(`🔥 ยอดเยี่ยม! โจมตีบอสสำเร็จด้วยคำตอบที่ถูกทางปัญญา! +${activeQuiz.points} Points`);
+
+                currentPlayer.points += activeQuiz.points;
+                currentPlayer.coins += 20;
+                currentPlayer.xp += 30;
+
+                currentQuizIndex++;
+                loadBossQuestion();
+            } else {
+                playSound('wrong');
+                alertCustom(`❌ พลาดไปนิด! โดนพลังต้านทานบอสสะท้อนคืนกลับมา ให้โอกาสน้องลองตอบใหม่อีกครั้งนะเพื่อช่วย Byte!`);
+            }
+        }
+
+        function triggerBossDefeat() {
+            triggerSuccessModal(
+                "👑 มหากาพย์ชัยชนะ! ปราบจอมเผด็จการไร้ระเบียบ Logicia สำเร็จ พร้อมคืนเสถียรภาพรหัสคอมพิวเตอร์ให้ Cyber City แล้ว!",
+                300, 100, 150,
+                "ผู้ชนะบอส"
+            );
+            if (currentPlayer.progress === 4) {
+                currentPlayer.progress = 5; // All game cleared
+            }
+        }
+
+        // ==========================================
+        // SYSTEM: SUCCESS MODAL AND REWARDS
+        // ==========================================
+        function triggerSuccessModal(description, pts, cns, xp, badgeName = "") {
+            playSound('level-up');
+
+            // Update stats
+            currentPlayer.points += pts;
+            currentPlayer.coins += cns;
+            currentPlayer.xp += xp;
+
+            // Check level up (every 100 XP per level scale)
+            const oldLevel = currentPlayer.level;
+            const newLevel = Math.floor(currentPlayer.xp / 100) + 1;
+            if (newLevel > oldLevel) {
+                currentPlayer.level = newLevel;
+            }
+
+            // Award badge if applicable
+            let isNewBadge = false;
+            if (badgeName && !currentPlayer.badges.includes(badgeName)) {
+                currentPlayer.badges.push(badgeName);
+                isNewBadge = true;
+            }
+
+            // Update modal text values
+            document.getElementById('success-modal-desc').innerText = description;
+            document.getElementById('gained-points').innerText = `+${pts}`;
+            document.getElementById('gained-coins').innerText = `+${cns}`;
+            document.getElementById('gained-xp').innerText = `+${xp}`;
+
+            const badgeBanner = document.getElementById('badge-unlocked-banner');
+            if (isNewBadge) {
+                badgeBanner.classList.remove('hidden');
+            } else {
+                badgeBanner.classList.add('hidden');
+            }
+
+            document.getElementById('modal-success').classList.remove('hidden');
+            updateHeaderStats();
+        }
+
+        function closeSuccessModal() {
+            document.getElementById('modal-success').classList.add('hidden');
+            goHub();
+        }
+
+        // Custom alert substitute (to avoid prompt standard window alert breaks inside preview)
+        function alertCustom(msg) {
+            // Built inside clean UI card notification using beautiful HTML prompt popup
+            const notifyDiv = document.createElement('div');
+            notifyDiv.className = "fixed top-5 left-1/2 -translate-x-1/2 max-w-sm w-full bg-slate-900 border-2 border-indigo-500 rounded-xl p-4 shadow-2xl z-50 text-xs text-white flex flex-col space-y-2 animate-bounce";
+            notifyDiv.innerHTML = `
+                <div class="flex items-center space-x-2">
+                    <span class="text-xl">📢</span>
+                    <span class="font-extrabold text-indigo-400 uppercase tracking-wide">แจ้งเตือนจากระบบ</span>
+                </div>
+                <p class="text-slate-200 leading-relaxed">${msg}</p>
+                <button class="bg-indigo-600 hover:bg-indigo-500 text-white py-1 px-3 rounded font-black text-[10px] self-end" onclick="this.parentElement.remove()">เข้าใจแล้ว 👍</button>
+            `;
+            document.body.appendChild(notifyDiv);
+            
+            // Auto close alert after 7 seconds
+            setTimeout(() => {
+                if (notifyDiv) notifyDiv.remove();
+            }, 7000);
+        }
+
+        // ==========================================
+        // TEACHER FEATURES & DASHBOARD FUNCTIONALITY
+        // ==========================================
+        let isTeacherMode = false;
+
+        function toggleTeacherPanel() {
+            playSound('click');
+            if (!isTeacherMode) {
+                showScreen('panel-teacher');
+                isTeacherMode = true;
+                updateTeacherStudentsList();
+            } else {
+                goHub();
+                isTeacherMode = false;
+            }
+        }
+
+        function updateTeacherStudentsList() {
+            const list = document.getElementById('teacher-students-list');
+            list.innerHTML = '';
+            document.getElementById('teacher-student-count').innerText = `จำนวนนักเรียนทั้งหมด: ${players.length} คน`;
+
+            players.forEach((p, idx) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-900/60 border-b border-slate-800/50";
+                
+                // Progress Label
+                let progressText = `ป.4 ด่าน 1`;
+                if (p.progress >= 5) progressText = `🏆 เคลียร์เกมสมบูรณ์`;
+                else if (p.progress >= 2) progressText = `เรียนรู้ถึงด่านที่ ${p.progress}`;
+
+                // Badges chips
+                let badgeBadges = p.badges.map(b => `<span class="bg-indigo-950 text-indigo-300 border border-indigo-800 text-[9px] font-bold px-1.5 py-0.2 rounded-full mr-1">${b}</span>`).join('');
+                if (badgeBadges === '') badgeBadges = `<span class="text-slate-600">-</span>`;
+
+                tr.innerHTML = `
+                    <td class="px-4 py-3 font-semibold text-slate-200">${p.name}</td>
+                    <td class="px-4 py-3 text-center text-slate-400 font-bold">${p.classroom}</td>
+                    <td class="px-4 py-3 text-center text-indigo-300 font-bold">${progressText}</td>
+                    <td class="px-4 py-3 text-right text-yellow-400 font-extrabold">${p.points} Pts</td>
+                    <td class="px-4 py-3 text-right">${badgeBadges}</td>
+                    <td class="px-4 py-3 text-right">
+                        <button onclick="removeStudent('${p.id}')" class="text-rose-400 hover:text-rose-300 hover:underline text-[10px]">ลบออก</button>
+                    </td>
+                `;
+                list.appendChild(tr);
+            });
+        }
+
+        function changeDifficulty(diff) {
+            selectedDifficulty = diff;
+            playSound('click');
+            document.getElementById('boss-level-difficulty').innerText = `ระดับความยากบอส: ${diff.toUpperCase()}`;
+            alertCustom(`ปรับความยากสำหรับการเรียนรู้เป็นระบบโหมด "${diff.toUpperCase()}" เรียบร้อย!`);
+        }
+
+        function addMockStudent() {
+            playSound('correct');
+            const mockNames = [
+                "สมศักดิ์ รักตรรกะ",
+                "วิภาวี มีความคิดสร้างสรรค์",
+                "อรัญ อัลกอริทึม",
+                "ขวัญใจ ไอที"
+            ];
+            const name = mockNames[Math.floor(Math.random() * mockNames.length)] + " (" + (players.length + 1) + ")";
+            const classes = ["4/1", "4/2", "4/3"];
+            const classroom = classes[Math.floor(Math.random() * classes.length)];
+            
+            const newStud = {
+                id: String(players.length + 1),
+                name: name,
+                classroom: classroom,
+                level: Math.floor(Math.random() * 4) + 1,
+                points: Math.floor(Math.random() * 600) + 100,
+                coins: Math.floor(Math.random() * 150) + 20,
+                xp: Math.floor(Math.random() * 300) + 10,
+                badges: ["คิดเป็นขั้นตอน"],
+                progress: Math.floor(Math.random() * 3) + 1
+            };
+
+            players.push(newStud);
+            updateTeacherStudentsList();
+            updateLeaderboard();
+        }
+
+        function removeStudent(id) {
+            playSound('click');
+            players = players.filter(p => p.id !== id);
+            updateTeacherStudentsList();
+            updateLeaderboard();
+        }
+
+        function exportScoresToCSV() {
+            playSound('correct');
+            // Mock headers and body
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "ID,Name,Classroom,Game Level,Points,Coins,XP,Badges,Progress (Stage)\n";
+
+            players.forEach(p => {
+                const row = [
+                    p.id,
+                    `"${p.name}"`,
+                    p.classroom,
+                    p.level,
+                    p.points,
+                    p.coins,
+                    p.xp,
+                    `"${p.badges.join(', ')}"`,
+                    p.progress
+                ].join(",");
+                csvContent += row + "\n";
+            });
+
+            // Trigger safe download in local browser environment
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `รายงานคะแนน_วิทยาการคำนวณ_ป4.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
     </script>
 </body>
 </html>
